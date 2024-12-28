@@ -1,9 +1,14 @@
 import Navbar_guest from "@/components/navbar_guest";
+import * as React from "react"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import emailIcon from "../assets/email-icon.svg";
 import bookStack from "../assets/large-book.svg";
 import lockIcon from "../assets/lock-icon.svg";
@@ -13,16 +18,21 @@ import readingPerson from "../assets/reading-desk.svg";
 import treeIllustration from "../assets/tree-scene.svg";
 import userIcon from "../assets/user-icon.svg";
 
+import { Popover,PopoverContent,PopoverTrigger } from "@/components/ui/popover"
+
+
+
 export default function Signup() {
+  const [date, setDate] = React.useState<Date>()
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    dateOfBirth: "",
   });
   const navigate = useNavigate();
 
@@ -33,41 +43,25 @@ export default function Signup() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.type === 'date' ? e.target.value : e.target.value;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     }));
   };
 
   return (
     <>
       <Navbar_guest />
-      <div className="min-h-screen bg-[#E5EADD] flex flex-col relative overflow-x-hidden">
-        {/* Decorative Images */}
-        <img
-          src={bookStack}
-          alt=""
-          className="absolute bottom-0 left-[-50px] w-[373px] hidden lg:block"
-        />
-        <img
-          src={floatingBook}
-          alt=""
-          className="absolute top-[80px] right-[80px] w-[245px] transform-none hidden lg:block"
-        />
-        <img
-          src={readingPerson}
-          alt=""
-          className="absolute bottom-0 right-0 w-[412px] hidden lg:block"
-        />
-
+      <div className="min-h-screen bg-[#E5EADD] flex flex-col justify-center items-center overflow-x-hidden">
         {/* Main Content */}
-        <div className="flex justify-center items-center min-h-screen px-4 py-8 sm:py-12">
-          <div className="w-full max-w-[912px] bg-[#a4c0ed] rounded-[13px] p-4 sm:p-8 relative overflow-hidden">
+       
+        <div className="w-full max-w-[900px] bg-[#a4c0ed] rounded-[10px] bottom-[85px] p-4 sm:p-8 relative overflow-hidden">
             {/* Tree illustration */}
             <img
               src={treeIllustration}
               alt=""
-              className="absolute bottom-0 left-0 w-[210px]"
+              className="absolute bottom-0 left-0 w-[210px] hidden lg:block"
             />
 
             {/* Signup Form */}
@@ -93,12 +87,12 @@ export default function Signup() {
                       value={formData.firstName}
                       onChange={handleChange}
                       required
-                      className="w-full h-[50px] sm:h-[67px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-6 text-base sm:text-lg font-medium border-none outline-none"
+                      className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[60px] sm:pl-[81px] pr-6 text-sm sm:text-lg font-medium border-none outline-none"
                     />
                     <img
                       src={userIcon}
                       alt=""
-                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[25px] h-[25px]"
+                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                     />
                   </div>
                   <div className="relative">
@@ -109,12 +103,12 @@ export default function Signup() {
                       value={formData.lastName}
                       onChange={handleChange}
                       required
-                      className="w-full h-[50px] sm:h-[67px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-6 text-base sm:text-lg font-medium border-none outline-none"
+                      className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[60px] sm:pl-[81px] pr-6 text-sm sm:text-lg font-medium border-none outline-none"
                     />
                     <img
                       src={userIcon}
                       alt=""
-                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[25px] h-[25px]"
+                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                     />
                   </div>
                 </div>
@@ -129,12 +123,12 @@ export default function Signup() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full h-[50px] sm:h-[67px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-6 text-base sm:text-lg font-medium border-none outline-none"
+                      className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[60px] sm:pl-[81px] pr-6 text-sm sm:text-lg font-medium border-none outline-none"
                     />
                     <img
                       src={emailIcon}
                       alt=""
-                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[25px] h-[25px]"
+                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                     />
                   </div>
                   <div className="relative">
@@ -145,18 +139,44 @@ export default function Signup() {
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      className="w-full h-[50px] sm:h-[67px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-6 text-base sm:text-lg font-medium border-none outline-none"
+                      className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[60px] sm:pl-[81px] pr-6 text-sm sm:text-lg font-medium border-none outline-none"
                     />
                     <img
                       src={phoneIcon}
                       alt=""
-                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[25px] h-[25px]"
+                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                     />
                   </div>
                 </div>
 
-                {/* Password Fields */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Date of Birth */}
+                <div className="relative">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[390px] h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[30px] sm:pl-[29px] justify-start text-left text-sm sm:text-sm font-medium border-none outline-none",
+                          !date && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="w-[100px] h-[10px]"/>
+                        {date ? format(date, "PPP") : <span>Date of Birth</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Password Fields */}
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -165,12 +185,12 @@ export default function Signup() {
                       value={formData.password}
                       onChange={handleChange}
                       required
-                      className="w-full h-[50px] sm:h-[67px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-12 text-base sm:text-lg font-medium border-none outline-none"
+                      className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[60px] sm:pl-[81px] pr-12 text-sm sm:text-lg font-medium border-none outline-none"
                     />
                     <img
                       src={lockIcon}
                       alt=""
-                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[23px] h-[27px]"
+                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                     />
                     <button
                       type="button"
@@ -184,41 +204,13 @@ export default function Signup() {
                       )}
                     </button>
                   </div>
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      name="confirmPassword"
-                      placeholder="Confirm Password"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      required
-                      className="w-full h-[50px] sm:h-[67px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-12 text-base sm:text-lg font-medium border-none outline-none"
-                    />
-                    <img
-                      src={lockIcon}
-                      alt=""
-                      className="absolute left-7 top-1/2 -translate-y-1/2 w-[23px] h-[27px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-6 top-1/2 -translate-y-1/2"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-500" />
-                      )}
-                    </button>
-                  </div>
+                 
                 </div>
 
                 <div className="flex flex-col items-center gap-4">
                   <Button
                     type="submit"
-                    className="w-full sm:w-[174px] h-[49px] bg-[#265073] hover:bg-[#265073]/90 text-white font-medium text-lg sm:text-xl rounded-[46px]"
+                    className="w-full sm:w-[174px] h-[40px] bg-[#265073] hover:bg-[#265073]/90 text-white font-medium text-lg sm:text-xl rounded-[46px]"
                   >
                     Submit
                   </Button>
@@ -236,8 +228,23 @@ export default function Signup() {
               </form>
             </div>
           </div>
+          {/* Decorative Images */}
+        <img
+          src={bookStack}
+          alt="Book Stack"
+          className="absolute bottom-[5%] left-[0%] max-w-[25%] h-auto hidden lg:block"
+        />
+        <img
+          src={floatingBook}
+          alt="Floating Book"
+          className="absolute top-[5%] right-[17%] max-w-[13%] h-auto hidden lg:block"
+        />
+        <img
+          src={readingPerson}
+          alt="Reading Person"
+          className="absolute bottom-[5%] right-10 max-w-[26%] h-auto hidden lg:block"
+        />
         </div>
-      </div>
     </>
   );
 }
