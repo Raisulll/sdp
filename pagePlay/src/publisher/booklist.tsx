@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import Navbar from "@/components/navbar";
 import {
   Accordion,
   AccordionContent,
@@ -6,9 +6,24 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Search } from "lucide-react";
-import Navbar from "@/components/navbar";
+
+// Sample book data
+const books = [
+  {
+    id: 1,
+    title: "Breaks Barriers",
+    cover: "/src/assets/book1.jpg",
+  },
+  {
+    id: 2,
+    title: "I Can't Live Without Books",
+    cover: "/src/assets/book2.jpg",
+  },
+  // Add more books as needed
+];
 
 export default function BookList() {
   return (
@@ -81,18 +96,7 @@ export default function BookList() {
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="author1" />
-                      <label htmlFor="author1" className="text-sm">
-                        Author One
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="author2" />
-                      <label htmlFor="author2" className="text-sm">
-                        Author Two
-                      </label>
-                    </div>
+                    {/* Add author checkboxes here */}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -158,21 +162,16 @@ export default function BookList() {
 
           {/* Books Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {[...Array(15)].map((_, index) => (
+            {[...Array(10)].map((_, index) => (
               <div
                 key={index}
-                className="group relative aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+                className="aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <img
-                  src={`/placeholder.svg?height=400&width=300&text=Book ${
-                    index + 1
-                  }`}
+                  src={`/placeholder.svg?height=400&width=300`}
                   alt={`Book ${index + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <p className="text-white font-medium">View Details</p>
-                </div>
               </div>
             ))}
           </div>
@@ -181,13 +180,13 @@ export default function BookList() {
         {/* Decorative Elements */}
         <div className="relative mt-12">
           <img
-            src="/placeholder.svg?height=200&width=200&text=Books Stack"
+            src="/src/assets/stack-books.svg"
             alt="Stack of books"
             className="absolute left-0 bottom-0 w-48 opacity-50"
           />
           <img
-            src="/placeholder.svg?height=200&width=200&text=Reading"
-            alt="Person reading"
+            src="/src/assets/reading-girl.svg"
+            alt="Girl reading"
             className="absolute right-0 bottom-0 w-48 opacity-50"
           />
         </div>
