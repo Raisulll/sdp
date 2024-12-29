@@ -7,6 +7,12 @@ export default function Navbar_guest() {
   const handleLogin = () => {
     navigate("/login");
   };
+
+  const handleAboutUs = () => {
+    navigate("/about-us");
+  };
+
+
   return (
     <header className="w-full px-4 py-4 border-b border-gray-200 bg-[#E5EADD]">
       <nav className="max-w-7xl mx-auto flex items-center justify-between">
@@ -15,7 +21,7 @@ export default function Navbar_guest() {
           <span className="text-xl font-bold text-primary">PagePlay</span>
         </Link>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" className="text-primary">
+          <Button variant="ghost" className="text-primary" onClick={handleAboutUs}>
             About Us
           </Button>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90"
