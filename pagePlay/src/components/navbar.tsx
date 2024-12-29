@@ -20,7 +20,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MobileNav } from "./mobile-nav";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom"; 
 
 const AVATAR_URL ="https://api.dicebear.com/6.x/avataaars/svg?seed=JohnDoee&background=%23EBF4FF&radius=50&width=285&height=285"; // Change the seed value to your name
 
@@ -100,9 +100,11 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
               <div className="p-2">
-                <MenuItem to="/profile" icon={User}>
+                <Link to="/profile" >
+                <MenuItem to="/user-profile" icon={User}>
                   PROFILE
                 </MenuItem>
+                </Link>
                 <MenuItem to="/my-books" icon={Book}>
                   MY BOOKS
                 </MenuItem>

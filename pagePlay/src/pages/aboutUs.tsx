@@ -72,7 +72,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#e5eadd" }}>
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4">
         <div className="relative">
           {/* Decorative Elements */}
           <div className="absolute left-0 bottom-0 opacity-20">
@@ -101,7 +101,7 @@ export default function AboutPage() {
                     <img
                       src={member.image}
                       alt={`${member.name}'s profile`}
-                      className="w-300 h-24 object-cover"
+                      className="w-50 h-24 object-cover"
                     />
                   </div>
                   <div className="flex-grow">
