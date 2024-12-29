@@ -161,7 +161,7 @@ export default function Signup() {
                           !date && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="w-[100px] h-[10px]"/>
+                        <CalendarIcon className="w-[100px] h-[10px] mr-7"/>
                         {date ? format(date, "PPP") : <span>Date of Birth</span>}
                       </Button>
                     </PopoverTrigger>

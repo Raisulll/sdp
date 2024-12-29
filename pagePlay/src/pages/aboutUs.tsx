@@ -19,51 +19,51 @@ interface TeamMember {
 
 const teamMembers: TeamMember[] = [
   {
-    name: "Md. Sabbir Hossain",
-    email: "example@example.com",
-    facebook: "https://facebook.com/example",
-    github: "https://github.com/example",
-    phone: "12345678",
-    image: sabbir
-  },
-  {
-    name: "Md. Rafiqul Islam Rahad",
-    email: "example2@example.com",
+    name: "Md. Raisul Islam Rahad",
+    email: "raisulll.rahad@gmail.com ",
     facebook: "https://facebook.com/example2",
     github: "https://github.com/example2",
-    phone: "12345678",
+    phone: "01778665529",
     image: rahad
   },
   {
+    name: "Md. Sabbir Hossain",
+    email: "sabbir1808769@gmail.com",
+    facebook: "https://facebook.com/example",
+    github: "https://github.com/example",
+    phone: "01798155814",
+    image: sabbir
+  },
+  {
     name: "Mr. Arif Abdullah",
-    email: "example3@example.com",
+    email: "arif465109@gmail.com",
     facebook: "https://facebook.com/example3",
     github: "https://github.com/example3",
-    phone: "12345678",
+    phone: "01721171112",
     image: arif
   },
   {
     name: "Anika Tasnim",
-    email: "example4@example.com",
+    email: "anika.tasnim0302@gmail.com",
     facebook: "https://facebook.com/example4",
     github: "https://github.com/example4",
-    phone: "12345678",
+    phone: "01711180435",
     image: anika
   },
   {
     name: "Kabbo Sarkar Surjo",
-    email: "example5@example.com",
+    email: "sarkarkabbo72@gmail.com",
     facebook: "https://facebook.com/example5",
     github: "https://github.com/example5",
-    phone: "12345678",
+    phone: "01795121387",
     image: surjo
   },
   {
-    name: "Md. Fahad Ahmed",
-    email: "example6@example.com",
+    name: "Md. Foisal Ahmed",
+    email: "mdfoisal552211@gmail.com",
     facebook: "https://facebook.com/example6",
     github: "https://github.com/example6",
-    phone: "12345678",
+    phone: "01533482516",
     image: foisal
   }
 ]
@@ -76,20 +76,10 @@ export default function AboutPage() {
         <div className="relative">
           {/* Decorative Elements */}
           <div className="absolute left-0 bottom-0 opacity-20">
-            <img
-              src={sabbir}
-              alt=""
-              className="w-48 h-32 object-cover"
-              role="presentation"
-            />
+            
           </div>
           <div className="absolute right-0 top-0 opacity-20">
-            <img
-              src={foisal}
-              alt=""
-              className="w-48 h-32 object-cover"
-              role="presentation"
-            />
+           
           </div>
 
           {/* Main Content */}
@@ -97,7 +87,7 @@ export default function AboutPage() {
             <h1 className="text-4xl font-bold text-gray-800 mb-4">About Us</h1>
           </div>
 
-          <div className="max-w-5xl mx-auto relative z-10">
+          <div className="max-w-5xl mx-auto relative z-5">
             {teamMembers.map((member, index) => (
               <Card 
                 key={index} 
@@ -106,12 +96,12 @@ export default function AboutPage() {
                 }`}
                 style={{ width: 'calc(100% - 2rem)', maxWidth: '600px' }}
               >
-                <CardContent className="flex items-center gap-6 p-6">
+                <CardContent className="flex items-center gap-6 p-11">
                   <div className="flex-shrink-0">
                     <img
                       src={member.image}
                       alt={`${member.name}'s profile`}
-                      className="w-32 h-24 object-cover"
+                      className="w-300 h-24 object-cover"
                     />
                   </div>
                   <div className="flex-grow">
