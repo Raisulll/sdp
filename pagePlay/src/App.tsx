@@ -5,6 +5,7 @@ import SignupPage from "./pages/signup";
 import UserProfile from "./user/profile";
 import PublisherProfile from "./publisher/publisherProfile";
 import BookList from "./publisher/booklist";
+import RequestedBooks from "./publisher/requested-books";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/user-profile" element={<UserProfile />} />
       <Route path="/publisher-profile" element={<PublisherProfile />} />
       <Route path="/book-list" element={<BookList />} />
+      <Route path="/requested-books" element={<RequestedBooks />} />
     </Routes>
   );
 }
