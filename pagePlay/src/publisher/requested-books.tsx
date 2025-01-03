@@ -6,16 +6,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 import {
-  Clock,
-  Search,
   AlertCircle,
   CheckCircle2,
+  Clock,
+  Search,
   XCircle,
 } from "lucide-react";
 
