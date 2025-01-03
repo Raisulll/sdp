@@ -1,14 +1,4 @@
-import React from "react";
-import {
-  BookOpen,
-  Search,
-  User,
-  Book,
-  Heart,
-  FileText,
-  Bookmark,
-  LogOut,
-} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,12 +7,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MobileNav } from "./mobile-nav";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom"; 
+import {
+  Book,
+  Bookmark,
+  BookOpen,
+  FileText,
+  Heart,
+  LogOut,
+  Search,
+  User,
+} from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { MobileNav } from "./mobile-nav";
 
-const AVATAR_URL ="https://api.dicebear.com/6.x/avataaars/svg?seed=JohnDoee&background=%23EBF4FF&radius=50&width=285&height=285"; // Change the seed value to your name
+const AVATAR_URL =
+  "https://api.dicebear.com/6.x/avataaars/svg?seed=JohnDoee&background=%23EBF4FF&radius=50&width=285&height=285"; // Change the seed value to your name
 
 // Navbar Component (Functional Component with TypeScript)
 const Navbar: React.FC = () => {
@@ -50,14 +51,14 @@ const Navbar: React.FC = () => {
           </Link>
 
           {/* Search Bar */}
-          <div className="hidden md:flex relative max-w-md w-full">
+          {/* <div className="hidden md:flex relative max-w-md w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
               type="search"
               placeholder="Search for books..."
               className="pl-10 bg-white/80 border-none w-full rounded-full focus-visible:ring-[#265073]"
             />
-          </div>
+          </div> */}
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-1">
             <NavLink to="/">Home</NavLink>
@@ -100,15 +101,13 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
               <div className="p-2">
-                <Link to="/profile" >
                 <MenuItem to="/user-profile" icon={User}>
                   PROFILE
                 </MenuItem>
-                </Link>
                 <MenuItem to="/my-books" icon={Book}>
                   MY BOOKS
                 </MenuItem>
-                <MenuItem to="/wishlist" icon={Heart}>
+                <MenuItem to="/wish-list" icon={Heart}>
                   WISHLIST
                 </MenuItem>
                 <MenuItem to="/blogs" icon={FileText}>

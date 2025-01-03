@@ -1,327 +1,388 @@
+import { ReportModal } from "@/components/BookDetails/ReportModal";
+import { WriteReviewModal } from "@/components/BookDetails/WriteReviewModal";
 import Navbar from "@/components/navbar";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { BookOpen, Heart, MessageCircle, Share2, Star } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Bookmark,
+  Heart,
+  MessageCircle,
+  MoreVertical,
+  Share2,
+  Star,
+  ThumbsUp,
+} from "lucide-react";
+import React, { useState } from "react";
 
-export default function BookDetails() {
-  // Sample data
-  const book = {
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    rating: 4.5,
-    totalRatings: 2345,
-    totalReviews: 1234,
-    description:
-      "Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived. To see how things would be if you had made other choices... Would you have done anything different, if you had the chance to undo your regrets?",
-    publishDate: "September 29, 2020",
-    publisher: "Viking",
-    pages: 304,
-    language: "English",
-    isbn: "978-0525559474",
-    genres: ["Fiction", "Fantasy", "Contemporary"],
+interface BookHeaderProps {
+  id: string;
+  title: string;
+  author: string;
+  coverUrl: string;
+  rating: number;
+  totalRatings: number;
+  totalReviews: number;
+  pages: number;
+  language: string;
+  publishDate: string;
+  description: string;
+  genre: string[];
+  price: number;
+}
+
+interface Review {
+  id: string;
+  user: {
+    name: string;
+    avatar: string;
+  };
+  rating: number;
+  date: string;
+  content: string;
+  likes: number;
+}
+
+interface SimilarBook {
+  id: string;
+  title: string;
+  coverUrl: string;
+  rating: number;
+}
+
+const BookDetails: React.FC = () => {
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+
+  const onWriteReview = () => {
+    setIsReviewModalOpen(true);
   };
 
-  const reviews = [
+  const onCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+  };
+
+  const book: BookHeaderProps = {
+    id: "1",
+    title: "Book Name",
+    author: "Author Name",
+    coverUrl: "https://via.placeholder.com/400x300?text=Book",
+    rating: 4.5,
+    totalRatings: 2419,
+    totalReviews: 1847,
+    pages: 324,
+    language: "English",
+    publishDate: "January 2024",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    genre: ["Fiction", "Fantasy", "Adventure"],
+    price: 19.99,
+  };
+
+  const { toast } = useToast();
+  const handleAddToWishlist = () => {
+    toast({
+      title: "Added to wishlist",
+      description: `${book.title} has been added to your wishlist.`,
+    });
+  };
+
+  const reviews: Review[] = [
     {
-      id: 1,
+      id: "1",
       user: {
-        name: "Sarah Johnson",
-        avatar: "https://api.dicebear.com/6.x/avataaars/svg?seed=Sarah",
+        name: "John Doe",
+        avatar: "/placeholder.svg?height=40&width=40",
       },
       rating: 5,
-      date: "March 15, 2024",
-      comment:
-        "This book completely changed my perspective on life. The way the author weaves together multiple storylines while maintaining the central theme is simply masterful.",
+      date: "2 days ago",
+      content:
+        "This book was absolutely amazing! The character development and plot twists kept me engaged throughout. Highly recommended for anyone who enjoys this genre.",
+      likes: 24,
     },
     {
-      id: 2,
+      id: "2",
       user: {
-        name: "Michael Chen",
-        avatar: "https://api.dicebear.com/6.x/avataaars/svg?seed=Michael",
+        name: "Jane Smith",
+        avatar: "/placeholder.svg?height=40&width=40",
       },
       rating: 4,
-      date: "March 14, 2024",
-      comment:
-        "A beautiful exploration of choices and regrets. While some parts felt a bit slow, the overall message is powerful and thought-provoking.",
-    },
-    {
-      id: 3,
-      user: {
-        name: "Emma Thompson",
-        avatar: "https://api.dicebear.com/6.x/avataaars/svg?seed=Emma",
-      },
-      rating: 5,
-      date: "March 13, 2024",
-      comment:
-        "Absolutely couldn't put it down! The concept is unique and the execution is flawless. A must-read for anyone who's ever wondered 'what if?'",
+      date: "1 week ago",
+      content:
+        "A great read overall, though some parts in the middle felt a bit slow. The ending more than made up for it though!",
+      likes: 16,
     },
   ];
 
-  const similarBooks = [
-    {
-      id: 1,
-      title: "The Invisible Life of Addie LaRue",
-      cover: "https://picsum.photos/seed/book1/200/300",
-      author: "V.E. Schwab",
-    },
-    {
-      id: 2,
-      title: "Project Hail Mary",
-      cover: "https://picsum.photos/seed/book2/200/300",
-      author: "Andy Weir",
-    },
-    {
-      id: 3,
-      title: "Klara and the Sun",
-      cover: "https://picsum.photos/seed/book3/200/300",
-      author: "Kazuo Ishiguro",
-    },
-    {
-      id: 4,
-      title: "Cloud Cuckoo Land",
-      cover: "https://picsum.photos/seed/book4/200/300",
-      author: "Anthony Doerr",
-    },
-  ];
+  const similarBooks: SimilarBook[] = Array(6).fill({
+    id: "1",
+    title: "Similar Book",
+    coverUrl: "https://via.placeholder.com/400x300?text=Book",
+    rating: 4.2,
+  });
 
   return (
-    <div className="min-h-screen bg-[#E5EADD]">
+    <>
       <Navbar />
+      <div className="min-h-screen bg-[#F5F0E8] pt-24">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Book Header */}
+          <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
+            <div className="space-y-4">
+              <img
+                src={book.coverUrl}
+                alt={book.title}
+                className="w-full rounded-lg shadow-lg"
+              />
 
-      <main className="container mx-auto px-4 py-24">
-        {/* Book Header Section */}
-        <div className="grid md:grid-cols-[350px_1fr] gap-8 mb-12">
-          {/* Book Cover */}
-          <div className="space-y-4">
-            <Card className="p-4 bg-white shadow-lg">
-              <div className="relative aspect-[2/3] w-full">
-                <img
-                  src="https://picsum.photos/seed/book/800/1200"
-                  alt={book.title}
-                  className="object-cover rounded-lg"
-                />
+              <div className="text-2xl font-bold text-center text-[#265073]">
+                ${book.price.toFixed(2)}
               </div>
-            </Card>
-            <div className="grid grid-cols-2 gap-4">
-              <Button className="w-full bg-[#265073] hover:bg-[#1a3b5c]">
-                <BookOpen className="mr-2 h-4 w-4" />
-                Read Now
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full border-[#265073] text-[#265073] hover:bg-[#265073] hover:text-white"
-              >
-                <Heart className="mr-2 h-4 w-4" />
-                Add to List
-              </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <Button className="w-full bg-[#265073] hover:bg-[#265073]/90">
+                  Buy Now
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleAddToWishlist}
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  Wishlist
+                </Button>
+              </div>
+              <div className="flex justify-between">
+                <Button variant="outline" size="icon">
+                  <Share2 className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Bookmark className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Book Info */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-4xl font-bold text-[#265073] mb-2">
-                {book.title}
-              </h1>
-              <p className="text-xl text-gray-600 mb-4">by {book.author}</p>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(book.rating)
-                          ? "fill-[#265073] text-[#265073]"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                  <span className="ml-2 text-[#265073] font-semibold">
-                    {book.rating}
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold text-[#265073] mb-2">
+                  {book.title}
+                </h1>
+                <p className="text-lg text-gray-600 mb-4">by {book.author}</p>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center">
+                    {Array(5)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(book.rating)
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    <span className="ml-2">{book.rating}</span>
+                  </div>
+                  <span>|</span>
+                  <span>{book.totalRatings.toLocaleString()} Ratings</span>
+                  <span>|</span>
+                  <span>{book.totalReviews.toLocaleString()} Reviews</span>
+                  <Button
+                    variant="link"
+                    className="text-[#265073] p-0 h-auto"
+                    onClick={onWriteReview}
+                  >
+                    Write a Review
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">Pages:</span>
+                  <span className="ml-2 font-medium">{book.pages}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Language:</span>
+                  <span className="ml-2 font-medium">{book.language}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Published:</span>
+                  <span className="ml-2 font-medium">{book.publishDate}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Genre:</span>
+                  <span className="ml-2 font-medium">
+                    {book.genre.join(", ")}
                   </span>
                 </div>
-                <Separator orientation="vertical" className="h-6" />
-                <div className="text-gray-600">
+              </div>
+
+              <div>
+                <h2 className="font-semibold mb-2">Description</h2>
+                <p className="text-gray-600">{book.description}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Rating Statistics */}
+          <div className="bg-white rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">Ratings & Reviews</h2>
+            <div className="grid md:grid-cols-[200px_1fr] gap-8">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-[#265073] mb-2">
+                  {book.rating}
+                </div>
+                <div className="flex justify-center mb-2">
+                  {Array(5)
+                    .fill(0)
+                    .map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-5 w-5 ${
+                          i < Math.floor(book.rating)
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                </div>
+                <div className="text-sm text-gray-600">
                   {book.totalRatings.toLocaleString()} ratings
                 </div>
-                <Separator orientation="vertical" className="h-6" />
-                <div className="text-gray-600">
-                  {book.totalReviews.toLocaleString()} reviews
-                </div>
               </div>
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-[#265073]">
-                About the Book
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                {book.description}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-              <div>
-                <span className="font-medium text-[#265073]">Published:</span>{" "}
-                <span className="text-gray-600">{book.publishDate}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#265073]">Publisher:</span>{" "}
-                <span className="text-gray-600">{book.publisher}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#265073]">Pages:</span>{" "}
-                <span className="text-gray-600">{book.pages}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#265073]">Language:</span>{" "}
-                <span className="text-gray-600">{book.language}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#265073]">ISBN:</span>{" "}
-                <span className="text-gray-600">{book.isbn}</span>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-[#265073] font-medium mb-2">Genres</h3>
-              <div className="flex gap-2">
-                {book.genres.map((genre) => (
-                  <Badge
-                    key={genre}
-                    className="bg-[#C2D9FF] hover:bg-[#B1CDFF] text-[#265073]"
-                  >
-                    {genre}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Rating Statistics */}
-        <Card className="p-6 bg-[#FAF7ED] mb-12">
-          <h2 className="text-2xl font-bold text-[#265073] mb-6">
-            Ratings & Reviews
-          </h2>
-          <div className="grid md:grid-cols-[200px_1fr] gap-8 items-center">
-            <div className="text-center">
-              <div className="text-5xl font-bold text-[#265073] mb-2">
-                {book.rating}
-              </div>
-              <div className="flex justify-center mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-6 h-6 ${
-                      i < Math.floor(book.rating)
-                        ? "fill-[#265073] text-[#265073]"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-              <div className="text-gray-600">{book.totalRatings} ratings</div>
-            </div>
-            <div className="space-y-2">
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex items-center gap-4">
-                  <div className="flex items-center gap-1 w-20">
-                    <Star className="w-4 h-4 fill-[#265073] text-[#265073]" />
-                    <span className="text-sm text-gray-600">{rating}</span>
+              <div className="space-y-2">
+                {[5, 4, 3, 2, 1].map((stars) => (
+                  <div key={stars} className="flex items-center gap-4">
+                    <div className="flex items-center w-20">
+                      {Array(stars)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Star
+                            key={i}
+                            className="h-4 w-4 text-yellow-400 fill-current"
+                          />
+                        ))}
+                    </div>
+                    <Progress value={Math.random() * 100} className="flex-1" />
                   </div>
-                  <Progress
-                    value={Math.random() * 100}
-                    className="h-2 w-full bg-gray-200"
-                  />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </Card>
 
-        {/* Reviews Section */}
-        <div className="space-y-6 mb-12">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-[#265073]">Reviews</h2>
-            <Button className="bg-[#265073] hover:bg-[#1a3b5c]">
-              <MessageCircle className="mr-2 h-4 w-4" />
-              Write a Review
-            </Button>
-          </div>
-          <div className="space-y-6">
+          {/* Reviews */}
+          <div className="space-y-6 mb-12">
+            <h2 className="text-xl font-semibold">Recent Reviews</h2>
             {reviews.map((review) => (
-              <Card key={review.id} className="p-6 bg-white">
+              <div key={review.id} className="bg-white rounded-lg p-6">
                 <div className="flex items-start gap-4">
-                  <img
-                    src={review.user.avatar}
-                    alt={review.user.name}
-                    className="w-12 h-12 rounded-full"
-                  />
+                  <Avatar>
+                    <AvatarImage src={review.user.avatar} />
+                    <AvatarFallback>{review.user.name[0]}</AvatarFallback>
+                  </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold text-[#265073]">
-                          {review.user.name}
-                        </h3>
-                        <div className="flex items-center gap-2">
+                        <h3 className="font-semibold">{review.user.name}</h3>
+                        <div className="flex items-center text-sm text-gray-600">
                           <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < review.rating
-                                    ? "fill-[#265073] text-[#265073]"
-                                    : "text-gray-300"
-                                }`}
-                              />
-                            ))}
+                            {Array(5)
+                              .fill(0)
+                              .map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-4 w-4 ${
+                                    i < review.rating
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {review.date}
-                          </span>
+                          <span className="mx-2">•</span>
+                          <span>{review.date}</span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
-                        <Share2 className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" className="space-x-1">
+                        <ThumbsUp className="h-4 w-4" />
+                        <span>{review.likes}</span>
                       </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => setIsReportModalOpen(true)}
+                            className="text-red-600"
+                          >
+                            Report
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                    <p className="text-gray-600">{review.comment}</p>
+                    <p className="text-gray-600">{review.content}</p>
                   </div>
                 </div>
-              </Card>
+              </div>
             ))}
+            <div className="text-center">
+              <Button variant="outline" className="space-x-2">
+                <MessageCircle className="h-4 w-4" />
+                <span>Show More Reviews</span>
+              </Button>
+            </div>
           </div>
-        </div>
 
-        {/* Similar Books Section */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-[#265073]">Similar Books</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {similarBooks.map((book) => (
-              <Card
-                key={book.id}
-                className="p-4 bg-white hover:shadow-lg transition-shadow cursor-pointer group"
-              >
-                <div className="relative aspect-[2/3] w-full mb-4">
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="object-cover rounded-lg group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <h3 className="font-semibold text-[#265073] line-clamp-1">
-                  {book.title}
-                </h3>
-                <p className="text-sm text-gray-600">{book.author}</p>
-              </Card>
-            ))}
+          {/* Similar Books */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Similar Books</h2>
+            <ScrollArea className="w-full whitespace-nowrap rounded-lg">
+              <div className="flex w-max space-x-4 p-4">
+                {similarBooks.map((book, i) => (
+                  <div key={`${book.id}-${i}`} className="w-[150px] space-y-2">
+                    <img
+                      src={book.coverUrl}
+                      alt={book.title}
+                      className="w-full h-[200px] object-cover rounded-lg shadow-md"
+                    />
+                    <div className="text-sm font-medium truncate">
+                      {book.title}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
+                      {book.rating}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
           </div>
         </div>
-      </main>
-    </div>
+        <WriteReviewModal
+          book={book}
+          isOpen={isReviewModalOpen}
+          onClose={onCloseReviewModal}
+        />
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+        />
+      </div>
+    </>
   );
-}
+};
+
+export default BookDetails;
