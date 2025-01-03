@@ -8,6 +8,7 @@ import BookList from "./publisher/booklist";
 import RequestedBooks from "./publisher/requested-books";
 import PublisherTransactions from "./publisher/transaction";
 import BookDetails from "./user/book-details";
+import AboutUs from "./pages/aboutUs";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Route path="/requested-books" element={<RequestedBooks />} />
       <Route path="/publisher-transactions" element={<PublisherTransactions />} />
       <Route path="/book-details" element={<BookDetails />} />
+      <Route path="/about-us" element={<AboutUs />} />
     </Routes>
   );
 }

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Camera, Gift, Plus, BookOpen, Users, Calendar, X } from "lucide-react";
+import { BookOpen, Calendar, Camera, Gift, Plus, Users } from "lucide-react";
 import React, { useRef, useState } from "react";
 
 const AVATAR_URL =
