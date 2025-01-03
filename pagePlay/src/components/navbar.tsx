@@ -100,7 +100,7 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
               <div className="p-2">
-                <MenuItem to="/profile" icon={User}>
+                <MenuItem to="/user-profile" icon={User}>
                   PROFILE
                 </MenuItem>
                 <MenuItem to="/my-books" icon={Book}>

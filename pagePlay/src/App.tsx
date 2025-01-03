@@ -6,6 +6,9 @@ import UserProfile from "./user/profile";
 import PublisherProfile from "./publisher/publisherProfile";
 import BookList from "./publisher/booklist";
 import RequestedBooks from "./publisher/requested-books";
+import PublisherTransactions from "./publisher/transaction";
+import BookDetails from "./user/book-details";
+
 
 function App() {
   return (
@@ -17,6 +20,8 @@ function App() {
       <Route path="/publisher-profile" element={<PublisherProfile />} />
       <Route path="/book-list" element={<BookList />} />
       <Route path="/requested-books" element={<RequestedBooks />} />
+      <Route path="/publisher-transactions" element={<PublisherTransactions />} />
+      <Route path="/book-details" element={<BookDetails />} />
     </Routes>
   );
 }
