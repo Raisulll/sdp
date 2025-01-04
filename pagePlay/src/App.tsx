@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import AboutUs from "./pages/aboutUs";
-import Contact from "./pages/Contact";
+import Contact from "./pages/contact";
 import LandingPage from "./pages/landingPage";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
@@ -14,7 +14,14 @@ import MyBooks from "./user/my-books";
 import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
 import Blogs from "./user/Blogs";
-
+import AdminProfile from "./admin/profile"
+import AdminUserlist from "./admin/userlist"
+import AdminLogin from "./admin/adminlogin"
+import AdminPublisher from "./admin/adminpublisher"
+import AdminReportReview from "./admin/ReportReview"
+import AdminTransaction from "./admin/admintransaction"
+import AdminReportDetails from "./admin/reportdetails"
+import AdminCreateReport from "./admin/createreport"
 function App() {
   return (
     <Routes>
@@ -37,6 +44,14 @@ function App() {
       <Route path="/wish-list" element={<WishlistPage />} />
       <Route path="/check-out" element={<CheckoutPage />} />
       <Route path="/blogs" element={<Blogs />} />
+      <Route path="admin-profile" element={<AdminProfile/>} />
+      <Route path="admin-login" element={<AdminLogin />} />
+      <Route path="admin-userlist" element={<AdminUserlist />} />
+      <Route path="admin-publisher" element={<AdminPublisher />} />
+      <Route path="admin-reportreview" element={<AdminReportReview />} />
+      <Route path="admin-transaction" element={<AdminTransaction />} />
+      <Route path="admin-reportdetails" element={<AdminReportDetails />} />
+      <Route path="admin-createreport" element={<AdminCreateReport />} />
     </Routes>
   );
 }
