@@ -22,6 +22,9 @@ import AdminReportReview from "./admin/ReportReview"
 import AdminTransaction from "./admin/admintransaction"
 import AdminReportDetails from "./admin/reportdetails"
 import AdminCreateReport from "./admin/createreport"
+import PdfReader from "./user/pdf-reader";
+import Home from "./pages/home";
+
 function App() {
   return (
     <Routes>
@@ -52,6 +55,8 @@ function App() {
       <Route path="admin-transaction" element={<AdminTransaction />} />
       <Route path="admin-reportdetails" element={<AdminReportDetails />} />
       <Route path="admin-createreport" element={<AdminCreateReport />} />
+      <Route path="/pdf-reader" element={<PdfReader />} />
+      <Route path="/home" element={<Home />} />
     </Routes>
   );
 }
