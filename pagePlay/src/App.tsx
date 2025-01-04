@@ -14,6 +14,8 @@ import MyBooks from "./user/my-books";
 import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
 import Blogs from "./user/Blogs";
+import PdfReader from "./user/pdf-reader";
+import Home from "./pages/home";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
       <Route path="/wish-list" element={<WishlistPage />} />
       <Route path="/check-out" element={<CheckoutPage />} />
       <Route path="/blogs" element={<Blogs />} />
+      <Route path="/pdf-reader" element={<PdfReader />} />
+      <Route path="/home" element={<Home />} />
     </Routes>
   );
 }

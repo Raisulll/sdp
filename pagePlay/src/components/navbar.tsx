@@ -7,7 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Book,
   Bookmark,
@@ -15,7 +14,6 @@ import {
   FileText,
   Heart,
   LogOut,
-  Search,
   User,
 } from "lucide-react";
 import React from "react";
@@ -45,7 +43,7 @@ const Navbar: React.FC = () => {
               PagePlay
             </span>
           </Link> */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/home" className="flex items-center gap-2">
             <BookOpen className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold text-primary">PagePlay</span>
           </Link>
@@ -61,7 +59,7 @@ const Navbar: React.FC = () => {
           </div> */}
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-1">
-            <NavLink to="/">Home</NavLink>
+            <NavLink to="/home">Home</NavLink>
             <NavLink to="/my-books">My Books</NavLink>
             <NavLink to="/blogs">Blogs</NavLink>
             <NavLink to="/contact">Contact us</NavLink>

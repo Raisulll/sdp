@@ -219,13 +219,13 @@ const ProfilePage: React.FC = () => {
                   <h3 className="font-semibold text-lg text-[#265073]">
                     Favorite Genres
                   </h3>
-                  <Button
+                  {/* <Button
                     variant="ghost"
                     size="sm"
                     className="text-[#265073] hover:text-[#265073]/80"
                   >
                     Edit
-                  </Button>
+                  </Button> */}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {genres.map((genre, index) => (
