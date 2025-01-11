@@ -33,36 +33,68 @@ const Navbar: React.FC = () => {
           <div className="md:hidden">
             <MobileNav />
           </div>
-
-          {/* Logo */}
-          {/* <Link to="/" className="flex items-center space-x-2 group">
-            <div className="bg-[#265073] p-2 rounded-lg transition-transform group-hover:scale-110">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-[#265073] hidden sm:inline">
-              PagePlay
-            </span>
-          </Link> */}
           <Link to="/home" className="flex items-center gap-2">
             <BookOpen className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold text-primary">PagePlay</span>
           </Link>
 
-          {/* Search Bar */}
-          {/* <div className="hidden md:flex relative max-w-md w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-            <Input
-              type="search"
-              placeholder="Search for books..."
-              className="pl-10 bg-white/80 border-none w-full rounded-full focus-visible:ring-[#265073]"
-            />
-          </div> */}
-          {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-1">
-            <NavLink to="/home">Home</NavLink>
-            <NavLink to="/my-books">My Books</NavLink>
-            <NavLink to="/blogs">Blogs</NavLink>
-            <NavLink to="/contact">Contact us</NavLink>
+            {/* {window.location.pathname !== "/publisher-profile" &&
+              window.location.pathname !== "/book-list" &&
+              window.location.pathname !== "/requested-books" &&
+              window.location.pathname !== "/publisher-transactions" && (
+                <NavLink to="/home">Home</NavLink>
+              )}
+
+            {window.location.pathname !== "/publisher-profile" &&
+              window.location.pathname !== "/book-list" &&
+              window.location.pathname !== "/requested-books" &&
+              window.location.pathname !== "/publisher-transactions" && (
+                <NavLink to="/my-books">My Books</NavLink>
+              )}
+            {window.location.pathname !== "/publisher-profile" &&
+              window.location.pathname !== "/book-list" &&
+              window.location.pathname !== "/requested-books" &&
+              window.location.pathname !== "/publisher-transactions" && (
+                <NavLink to="/blogs">Blogs</NavLink>
+              )} */}
+            {/* <NavLink to="/contact">Contact us</NavLink> */}
+
+            {/* User nav */}
+            {window.location.pathname === "/user-profile" ||
+            window.location.pathname === "/my-books" ||
+            window.location.pathname === "/wish-list" ||
+            window.location.pathname === "/blogs" ||
+            window.location.pathname === "/home" ||
+            window.location.pathname === "/pdf-reader" ||
+            window.location.pathname === "/book-details" ||
+            window.location.pathname === "/contact" ||
+            window.location.pathname === "/check-out" ||
+            window.location.pathname === "/chat-bot" ||
+            window.location.pathname === "/favourite-books" ? (
+              <>
+                <NavLink to="/home">Home</NavLink>
+                <NavLink to="/my-books">My Books</NavLink>
+                <NavLink to="/chat-bot">Chatbot</NavLink>
+                <NavLink to="/wish-list">Wishlist</NavLink>
+                <NavLink to="/blogs">Blogs</NavLink>
+                <NavLink to="/favourite-books">Favourite Books</NavLink>
+                <NavLink to="/user-profile">Profile</NavLink>
+              </>
+            ) : null}
+
+            {/* publisher nav */}
+            {window.location.pathname === "/publisher-profile" ||
+            window.location.pathname === "/book-list" ||
+            window.location.pathname === "/requested-books" ||
+            window.location.pathname.includes("/publisher-transactions") ? (
+              <>
+                <NavLink to="/publisher-profile">Profile</NavLink>
+                <NavLink to="/book-list">Book List</NavLink>
+                <NavLink to="/requested-books">Requested Books</NavLink>
+                <NavLink to="/publisher-transactions">Transactions</NavLink>
+              </>
+            ) : null}
           </div>
 
           {/* User Menu */}

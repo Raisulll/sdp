@@ -10,7 +10,7 @@ export const Footer: FC<FooterProps> = ({ socialLinks }) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#FEFFF0] border-t border-[#265073]/10 py-8">
+    <footer className="bg-[#E5EADD] border-t border-[#265073]/10 py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>

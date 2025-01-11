@@ -1,0 +1,98 @@
+import { type Book } from "@/types/blog";
+
+export const trendingBooks: Book[] = [
+  {
+    id: "1",
+    title: "The Midnight Library",
+    author: "Matt Haig",
+    coverImage: "https://images.unsplash.com/photo-1507696374483-eebbe4dfe6fe",
+    rating: 4.5,
+    description:
+      "A story between life and death, exploring infinite possibilities.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "2",
+    title: "Project Hail Mary",
+    author: "Andy Weir",
+    coverImage: "https://images.unsplash.com/photo-1603777277349-f1cbdffad7b5",
+    rating: 4.8,
+    description: "An astronaut wakes up alone on a spacecraft with no memory.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "3",
+    title: "Klara and the Sun",
+    author: "Kazuo Ishiguro",
+    coverImage: "https://images.unsplash.com/photo-1597237465939-3e3fbe77cb0c",
+    rating: 4.2,
+    description: "An AI observes human nature while waiting to be chosen.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "4",
+    title: "The Seven Husbands of Evelyn Hugo",
+    author: "Taylor Jenkins Reid",
+    coverImage: "https://images.unsplash.com/photo-1583931346140-0b3984d29b2f",
+    rating: 4.7,
+    description: "A Hollywood legend reveals her life story.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+];
+
+export const suggestedBooks: Book[] = [
+  {
+    id: "5",
+    title: "There's a Million Books on the Wall",
+    author: "Sarah Johnson",
+    coverImage: "https://images.unsplash.com/photo-1504810662200-0fa1992729ac",
+    rating: 4.3,
+    description: "A journey through literary history.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "6",
+    title: "The Last Bookshop",
+    author: "Emma Thompson",
+    coverImage: "https://images.unsplash.com/photo-1534717062263-d55c813db381",
+    rating: 4.6,
+    description: "A tale of preserving stories in a digital age.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "7",
+    title: "The Silent Reader",
+    author: "Michael Chen",
+    coverImage: "https://images.unsplash.com/photo-1597255598478-d63e1fc5220e",
+    rating: 4.1,
+    description: "A mystery set in an ancient library.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "8",
+    title: "Words in the Wind",
+    author: "Lucy Parker",
+    coverImage: "https://images.unsplash.com/photo-1573497613743-b2e122cb70ed",
+    rating: 4.4,
+    description: "Poetry meets prose in this unique collection.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "9",
+    title: "The Book Collector",
+    author: "James Wright",
+    coverImage: "https://images.unsplash.com/photo-1583931324095-e0b953568556",
+    rating: 4.9,
+    description: "A rare book dealer's dangerous pursuit.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+  {
+    id: "10",
+    title: "Library of Dreams",
+    author: "Diana Martinez",
+    coverImage: "https://images.unsplash.com/photo-1581139744306-e45a05f9b300",
+    rating: 4.5,
+    description: "Where dreams and reality merge in books.",
+    pdfUrl: "https://example.com/book.pdf",
+  },
+];

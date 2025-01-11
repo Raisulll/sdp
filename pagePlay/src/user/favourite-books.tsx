@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-export default function MyBooks() {
+export default function FavouriteBooks() {
   return (
     <div className="min-h-screen bg-[#E5EADD]">
       <Navbar />

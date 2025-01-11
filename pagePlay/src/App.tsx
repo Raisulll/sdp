@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import AboutUs from "./pages/aboutUs";
 import Contact from "./pages/Contact";
+import Home from "./pages/home";
 import LandingPage from "./pages/landingPage";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
@@ -8,14 +9,15 @@ import BookList from "./publisher/booklist";
 import PublisherProfile from "./publisher/publisherProfile";
 import RequestedBooks from "./publisher/requested-books";
 import PublisherTransactions from "./publisher/transaction";
+import Blogs from "./user/Blogs";
 import BookDetails from "./user/book-details";
 import CheckoutPage from "./user/CheckoutPage";
 import MyBooks from "./user/my-books";
 import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
-import Blogs from "./user/Blogs";
-import PdfReader from "./user/pdf-reader";
-import Home from "./pages/home";
+import PDFReader  from "./user/pdf-reader";
+import FavouriteBooks from "./user/favourite-books";
+import ChatBot from "./user/ChatBot";
 
 function App() {
   return (
@@ -26,6 +28,18 @@ function App() {
       <Route path="/user-profile" element={<UserProfile />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/book-details" element={<BookDetails />} />
+      <Route path="/about-us" element={<AboutUs />} />
+      <Route path="/my-books" element={<MyBooks />} />
+      <Route path="/wish-list" element={<WishlistPage />} />
+      <Route path="/check-out" element={<CheckoutPage />} />
+      <Route path="/blogs" element={<Blogs />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/pdf-reader" element={<PDFReader />} />
+      <Route path="/favourite-books" element={<FavouriteBooks />} />
+      <Route path="/chat-bot" element={<ChatBot />} />
+
+      {/* publisher */}
       <Route path="/publisher-profile" element={<PublisherProfile />} />
       <Route path="/book-list" element={<BookList />} />
       <Route path="/requested-books" element={<RequestedBooks />} />
@@ -33,14 +47,6 @@ function App() {
         path="/publisher-transactions"
         element={<PublisherTransactions />}
       />
-      <Route path="/book-details" element={<BookDetails />} />
-      <Route path="/about-us" element={<AboutUs />} />
-      <Route path="/my-books" element={<MyBooks />} />
-      <Route path="/wish-list" element={<WishlistPage />} />
-      <Route path="/check-out" element={<CheckoutPage />} />
-      <Route path="/blogs" element={<Blogs />} />
-      <Route path="/pdf-reader" element={<PdfReader />} />
-      <Route path="/home" element={<Home />} />
     </Routes>
   );
 }

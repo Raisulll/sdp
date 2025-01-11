@@ -1,34 +1,13 @@
-import { type FC } from "react";
-import Navbar from "@/components/navbar";
-import { Footer } from "@/components/footer";
 import { BookCard } from "@/components/book-card";
+import { BookCarousel } from "@/components/book-carousel";
+import { Footer } from "@/components/footer";
+import Navbar from "@/components/navbar";
 import { ReadingChallenge } from "@/components/reading-challenge";
-import { WelcomeCard } from "@/components/welcome-card";
 import { Input } from "@/components/ui/input";
+import { WelcomeCard } from "@/components/welcome-card";
+import { suggestedBooks, trendingBooks } from "@/data/books";
 import { Search } from "lucide-react";
-import { type Book } from "@/types/blog";
-
-const trendingBooks: Book[] = [
-  {
-    id: "1",
-    title: "Book Name",
-    author: "Author Name",
-    cover: "https://via.placeholder.com/400x300?text=Book",
-    rating: 4,
-  },
-  // Add more books as needed
-];
-
-const suggestedBooks: Book[] = [
-  {
-    id: "5",
-    title: "There's a Million Books on the Wall",
-    author: "Author Name",
-    cover: "https://via.placeholder.com/400x300?text=Book",
-    rating: 5,
-  },
-  // Add more books as needed
-];
+import { type FC } from "react";
 
 const socialLinks = {
   facebook: "https://facebook.com/pageplay",
@@ -48,7 +27,7 @@ const HomePage: FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FEFFF0]">
+    <div className="min-h-screen bg-[#E5EADD]">
       <Navbar />
 
       <main className="container mx-auto px-4 pt-24 pb-12">
@@ -87,22 +66,11 @@ const HomePage: FC = () => {
               <h2 className="text-2xl font-bold text-[#265073] mb-6">
                 Trending Books
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
-                  <BookCard
-                    book={trendingBooks[0]}
-                    size="large"
-                    onClick={handleBookClick}
-                  />
-                </div>
-                {trendingBooks.slice(1, 5).map((book) => (
-                  <BookCard
-                    key={book.id}
-                    book={book}
-                    onClick={handleBookClick}
-                  />
-                ))}
-              </div>
+              <BookCarousel
+                books={trendingBooks}
+                onBookClick={handleBookClick}
+                className="mb-6"
+              />
             </section>
 
             {/* Suggestions */}

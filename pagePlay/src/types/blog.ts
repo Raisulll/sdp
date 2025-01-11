@@ -33,6 +33,49 @@ export interface Book {
   id: string;
   title: string;
   author: string;
-  cover: string;
+  coverImage: string;
   rating: number;
+  description: string;
+  pdfUrl: string;
+  audioUrl?: string;
 }
+
+export interface BookDetails {
+  id: string;
+  title: string;
+  author: string;
+  coverUrl: string;
+  description: string;
+  rating: number;
+  pdfUrl: string;
+  audioUrl?: string;
+  currentPage?: number;
+  status?: "reading" | "finished";
+}
+
+export interface PDFReaderProps {
+  pdfUrl?: string;
+  totalPages?: number;
+  maxWidth?: string;
+  audioUrl?: string;
+  bookTitle?: string;
+  author?: string;
+  description?: string;
+  rating?: number;
+}
+
+export interface AudioControlsProps {
+  isPlaying: boolean;
+  isMuted: boolean;
+  volume: number;
+  progress: number;
+  onPlayPause: () => void;
+  onMuteToggle: () => void;
+  onVolumeChange: (value: number[]) => void;
+  onProgressChange: (value: number[]) => void;
+}
+
+export interface IconProps extends React.SVGProps<SVGSVGElement> {
+  size?: number;
+}
+

@@ -1,124 +1,212 @@
 import Navbar from "@/components/navbar";
-import { AudioPlayer } from "@/components/pdf-viewer/audio-player";
-import { PageThumbnails } from "@/components/pdf-viewer/page-thumbnails";
-import { Toolbar } from "@/components/pdf-viewer/toolbar";
-import { Card } from "@/components/ui/card";
+import { Toolbar } from "@/components/pdf-reader/toolbar";
 import { Star } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 // Configure worker for react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
-// Sample PDF and Audio URLs
-const samplePDF = "../assets/sample.pdf";
-const sampleAudioUrl = "sample-audiobook.mp3";
+// Sample PDF and Book Data
+const samplePDF = "/Codebook.pdf";
+
+interface BookHeaderProps {
+  id: string;
+  title: string;
+  author: string;
+  coverUrl: string;
+  rating: number;
+  totalRatings: number;
+  totalReviews: number;
+  pages: number;
+  language: string;
+  publishDate: string;
+  description: string;
+  genre: string[];
+  price: number;
+}
+
+const book: BookHeaderProps = {
+  id: "1",
+  title: "Book Name",
+  author: "Author Name",
+  coverUrl: "https://via.placeholder.com/400x300?text=Book",
+  rating: 4.5,
+  totalRatings: 2419,
+  totalReviews: 1847,
+  pages: 324,
+  language: "English",
+  publishDate: "January 2024",
+  description:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  genre: ["Fiction", "Fantasy", "Adventure"],
+  price: 19.99,
+};
 
 export default function PDFReader() {
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [zoom, setZoom] = useState(1);
-  const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const handleZoomIn = () => setZoom((prev) => Math.min(2, prev + 0.1));
-  const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.1));
+  const handleZoomIn = () => setZoom((prev) => Math.min(2, prev + 0.1)); // Max zoom level
+  const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.1)); // Min zoom level
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
   };
 
+  // Scroll the active page to the top of the sidebar
+  useEffect(() => {
+    if (sidebarRef.current) {
+      const activeThumbnail = sidebarRef.current.children[currentPage - 1];
+      if (activeThumbnail) {
+        sidebarRef.current.scrollTo({
+          top: (activeThumbnail as HTMLElement).offsetTop,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [currentPage]);
+
   return (
-    <div className="min-h-screen bg-[#FEFFF0]">
+    <>
       <Navbar />
+      <div className="min-h-screen bg-[#FEFFF0] pt-24">
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          {/* Book Header */}
+          <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
+            <div className="space-y-4">
+              <img
+                src={book.coverUrl}
+                alt={book.title}
+                className="w-full rounded-lg shadow-lg"
+              />
+            </div>
 
-      <main className="container mx-auto px-4 pt-20 pb-12">
-        {/* Book Header */}
-        <div className="flex items-start gap-6 mb-6">
-          <Card className="w-48 h-64 overflow-hidden">
-            <img
-              src="/placeholder.svg?height=400&width=300&text=Book+Cover"
-              alt="Book cover"
-              className="w-full h-full object-cover"
-            />
-          </Card>
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold text-[#265073] mb-2">
+                  {book.title}
+                </h1>
+                <p className="text-lg text-gray-600 mb-4">by {book.author}</p>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center">
+                    {Array(5)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(book.rating)
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    <span className="ml-2">{book.rating}</span>
+                  </div>
+                  <span>|</span>
+                  <span>{book.totalRatings.toLocaleString()} Ratings</span>
+                  <span>|</span>
+                  <span>{book.totalReviews.toLocaleString()} Reviews</span>
+                </div>
+              </div>
 
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-[#265073] mb-2">
-              Book Name
-            </h1>
-            <p className="text-lg text-gray-600 mb-4">Author Name</p>
-            <div className="flex items-center gap-1 mb-4">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={`w-5 h-5 ${
-                    star <= 4
-                      ? "fill-[#265073] text-[#265073]"
-                      : "text-gray-300"
-                  }`}
-                />
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">Pages:</span>
+                  <span className="ml-2 font-medium">{book.pages}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Language:</span>
+                  <span className="ml-2 font-medium">{book.language}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Published:</span>
+                  <span className="ml-2 font-medium">{book.publishDate}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Genre:</span>
+                  <span className="ml-2 font-medium">
+                    {book.genre.join(", ")}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="font-semibold mb-2">Description</h2>
+                <p className="text-gray-600">{book.description}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Reader Container */}
+          <div className="grid grid-cols-[250px_1fr] gap-6">
+            {/* Thumbnails Sidebar */}
+            <div
+              ref={sidebarRef}
+              className="bg-white rounded-lg shadow-lg p-2 overflow-auto"
+              style={{ height: "calc(100vh - 16rem)" }}
+            >
+              {Array.from(new Array(numPages), (el, index) => (
+                <div
+                  key={`thumbnail_${index + 1}`}
+                  className="p-2 rounded-md cursor-pointer hover:bg-gray-100"
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  <Document file={samplePDF}>
+                    <Page pageNumber={index + 1} width={210} />
+                  </Document>
+                </div>
               ))}
             </div>
-            <p className="text-gray-600 mb-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
-        </div>
 
-        {/* Reader Container */}
-        <div className="grid grid-cols-[250px_1fr] gap-6">
-          {/* Thumbnails Sidebar */}
-          <div className="bg-white rounded-lg shadow-lg p-2">
-            <PageThumbnails
-              pages={Array(numPages).fill(null).map((_, index) => (index + 1).toString())}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            />
-          </div>
+            {/* PDF Viewer */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden relative">
+              <Toolbar
+                currentPage={currentPage}
+                totalPages={numPages || 0}
+                onPageChange={setCurrentPage}
+                onZoomIn={handleZoomIn}
+                onZoomOut={handleZoomOut}
+                onToggleAudio={() => {}}
+                isAudioPlaying={false}
+              />
 
-          {/* PDF Viewer */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden relative">
-            <Toolbar
-              currentPage={currentPage}
-              totalPages={numPages || 0}
-              onPageChange={setCurrentPage}
-              onZoomIn={handleZoomIn}
-              onZoomOut={handleZoomOut}
-              onToggleAudio={() => setShowAudioPlayer(!showAudioPlayer)}
-              isAudioPlaying={showAudioPlayer}
-            />
-
-            <div
-              className="h-[calc(100vh-16rem)] overflow-auto p-4"
-              style={{
-                backgroundColor: "#f5f5f5",
-                textAlign: "center",
-              }}
-            >
-              <Document
-                file={samplePDF}
-                onLoadSuccess={onDocumentLoadSuccess}
-                loading={<p>Loading PDF...</p>}
+              <div
+                className="overflow-auto"
+                style={{
+                  height: "calc(100vh - 4rem)",
+                  backgroundColor: "#f5f5f5",
+                }}
               >
-                <Page
-                  pageNumber={currentPage}
-                  scale={zoom}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                />
-              </Document>
-            </div>
-
-            {/* Audio Player */}
-            {showAudioPlayer && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-96">
-                <AudioPlayer audioUrl={sampleAudioUrl} />
+                <div
+                  className="flex justify-center items-start"
+                  style={{
+                    transform: `scale(${zoom})`,
+                    transformOrigin: "top center",
+                  }}
+                >
+                  <Document
+                    file={samplePDF}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    loading={<p>Loading PDF...</p>}
+                  >
+                    <Page
+                      pageNumber={currentPage}
+                      renderAnnotationLayer={false}
+                      renderTextLayer={false}
+                    />
+                  </Document>
+                </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
