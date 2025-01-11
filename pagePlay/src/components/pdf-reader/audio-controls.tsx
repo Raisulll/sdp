@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { FastForward, Play, Rewind } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface AudioControlsProps {
   onClose: () => void;

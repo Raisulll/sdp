@@ -1,11 +1,10 @@
-import * as React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import useEmblaCarousel from "embla-carousel-react";
-import { type Book } from "@/types/blog";
 import { BookCard } from "@/components/book-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useEffect, useCallback } from "react";
+import { type Book } from "@/types/blog";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useEffect } from "react";
 
 interface BookCarouselProps {
   books: Book[];

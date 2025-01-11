@@ -19,7 +19,7 @@ const socialLinks = {
 const HomePage: FC = () => {
   const navigate = useNavigate();
 
-  const handleBookClick = (bookId: string) => {
+  const handleBookClick = () => {
     navigate(`/book-details`);
   };
 

@@ -15,11 +15,9 @@ import { suggestedBooks, trendingBooks } from "@/data/books";
 import { useToast } from "@/hooks/use-toast";
 import { type Book } from "@/types/blog";
 import {
-  Bookmark,
   Heart,
   MessageCircle,
   MoreVertical,
-  Share2,
   Star,
   ThumbsUp,
 } from "lucide-react";

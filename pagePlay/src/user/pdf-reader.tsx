@@ -1,11 +1,11 @@
 import Navbar from "@/components/navbar";
 import { Toolbar } from "@/components/pdf-reader/toolbar";
+import { trendingBooks } from "@/data/books";
 import { Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { trendingBooks } from "@/data/books";
 
 // Configure worker for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
@@ -119,7 +119,7 @@ export default function PDFReader() {
               className="bg-white rounded-lg shadow-lg p-2 overflow-auto"
               style={{ height: "calc(100vh - 16rem)" }}
             >
-              {Array.from(new Array(numPages), (el, index) => (
+              {Array.from(new Array(numPages), (_, index) => (
                 <div
                   key={`thumbnail_${index + 1}`}
                   className="p-2 rounded-md cursor-pointer hover:bg-gray-100"

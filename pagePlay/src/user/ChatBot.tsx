@@ -8,12 +8,6 @@ import { Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 import Navbar from "@/components/navbar";
 
-interface Message {
-  id: string;
-  content: string;
-  role: "user" | "assistant";
-  timestamp: string;
-}
 
 export default function ChatBot() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();

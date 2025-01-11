@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
-  Bookmark,
   ChevronLeft,
   ChevronRight,
   HeadphonesIcon,
@@ -16,7 +15,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AudioControls } from "./audio-controls";
 
 interface ToolbarProps {
