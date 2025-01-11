@@ -2,7 +2,7 @@ import ContactForm from "@/components/contact-form";
 import ContactInfo from "@/components/contact-info";
 import Navbar from "@/components/navbar";
 
-export default function Contact() {
+export default function ContactUs() {
   return (
     <div className="min-h-screen bg-[#E5EADD]">
       <Navbar />
