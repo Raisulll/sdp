@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
+import AdminDashboard from "./admin/admin-dashboard";
 import AboutUs from "./pages/aboutUs";
-import ContactUs from "./pages/Contact";
+import ContactUs from "./pages/contact";
 import Home from "./pages/home";
 import LandingPage from "./pages/landingPage";
 import LoginPage from "./pages/login";
@@ -11,14 +12,13 @@ import RequestedBooks from "./publisher/requested-books";
 import PublisherTransactions from "./publisher/transaction";
 import Blogs from "./user/Blogs";
 import BookDetails from "./user/book-details";
-import ChatBot from "./user/ChatBot";
-import CheckoutPage from "./user/CheckoutPage";
+import ChatBot from "./user/chatBot";
+import CheckoutPage from "./user/checkoutPage";
 import FavouriteBooks from "./user/favourite-books";
 import MyBooks from "./user/my-books";
 import PDFReader from "./user/pdf-reader";
 import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
-import AdminDashboard from "./admin/admin-dashboard";
 
 function App() {
   return (

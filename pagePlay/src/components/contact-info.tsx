@@ -15,10 +15,10 @@ export default function ContactInfo() {
         <div className="flex items-center gap-3 text-gray-600">
           <Mail className="h-5 w-5" />
           <a
-            href="mailto:pageplay2024@gmail.com"
+            href="mailto:pageplay01@gmail.com"
             className="hover:text-[#265073] transition-colors"
           >
-            pageplay2024@gmail.com
+            pageplay01@gmail.com
           </a>
         </div>
         <div className="flex items-center gap-3 text-gray-600">
