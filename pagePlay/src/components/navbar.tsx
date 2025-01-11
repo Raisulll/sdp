@@ -39,27 +39,6 @@ const Navbar: React.FC = () => {
           </Link>
 
           <div className="hidden md:flex items-center space-x-1">
-            {/* {window.location.pathname !== "/publisher-profile" &&
-              window.location.pathname !== "/book-list" &&
-              window.location.pathname !== "/requested-books" &&
-              window.location.pathname !== "/publisher-transactions" && (
-                <NavLink to="/home">Home</NavLink>
-              )}
-
-            {window.location.pathname !== "/publisher-profile" &&
-              window.location.pathname !== "/book-list" &&
-              window.location.pathname !== "/requested-books" &&
-              window.location.pathname !== "/publisher-transactions" && (
-                <NavLink to="/my-books">My Books</NavLink>
-              )}
-            {window.location.pathname !== "/publisher-profile" &&
-              window.location.pathname !== "/book-list" &&
-              window.location.pathname !== "/requested-books" &&
-              window.location.pathname !== "/publisher-transactions" && (
-                <NavLink to="/blogs">Blogs</NavLink>
-              )} */}
-            {/* <NavLink to="/contact">Contact us</NavLink> */}
-
             {/* User nav */}
             {window.location.pathname === "/user-profile" ||
             window.location.pathname === "/my-books" ||
@@ -95,6 +74,9 @@ const Navbar: React.FC = () => {
                 <NavLink to="/publisher-transactions">Transactions</NavLink>
               </>
             ) : null}
+
+            {/* common nav */}
+            <NavLink to="/contact">Contact us</NavLink>
           </div>
 
           {/* User Menu */}
