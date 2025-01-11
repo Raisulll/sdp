@@ -2,16 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Play } from "lucide-react";
 
-interface AudioControlsProps {
-  onClose: () => void;
-  className?: string;
-}
-
-export function AudioControls({ onClose, className = "" }: AudioControlsProps) {
+export function AudioControls() {
   return (
-    <div
-      className={`bg-white rounded-lg shadow-lg p-4 w-[300px] space-y-4 ${className}`}
-    >
+    <div className={`bg-white rounded-lg shadow-lg p-4 w-[300px] space-y-4 `}>
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">Now Playing</span>
         <span className="text-xs text-muted-foreground">2:30 / 5:45</span>

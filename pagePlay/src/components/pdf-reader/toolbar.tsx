@@ -146,7 +146,7 @@ export function Toolbar({
             zIndex: 50,
           }}
         >
-          <AudioControls onClose={() => setAudioControlsPosition(null)} />
+          <AudioControls/>
         </div>
       )}
     </div>
