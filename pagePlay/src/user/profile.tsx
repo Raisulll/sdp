@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BookOpen, Calendar, Camera, Gift, Plus, Users } from "lucide-react";
 import React, { useRef, useState } from "react";
+import { TransactionTable } from "@/components/transaction-table";
+import { transactions } from "@/data/transactions";
 
 const AVATAR_URL =
   "https://api.dicebear.com/6.x/avataaars/svg?seed=JohnDoee&background=%23EBF4FF&radius=50&width=285&height=285";
@@ -87,15 +89,15 @@ const ProfilePage: React.FC = () => {
                 <div className="space-y-3">
                   <p className="text-gray-600 flex items-center gap-3">
                     <Users className="h-4 w-4 text-[#265073]" />
-                    Male, City, Country
+                    Male, New York, USA
                   </p>
                   <p className="text-gray-600 flex items-center gap-3">
                     <Gift className="h-4 w-4 text-[#265073]" />
-                    Birth Day: DD/MM/YYYY
+                    Birth Day: 01/01/1990
                   </p>
                   <p className="text-gray-600 flex items-center gap-3">
                     <Calendar className="h-4 w-4 text-[#265073]" />
-                    Joined: Month DD YEAR
+                    Joined: January 2020
                   </p>
                 </div>
               </div>
@@ -106,7 +108,7 @@ const ProfilePage: React.FC = () => {
               <div className="text-center md:text-left">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-3xl font-bold text-[#265073]">
-                    User Name
+                    John Doe
                   </h2>
                   <Dialog
                     open={isEditDialogOpen}
@@ -136,7 +138,7 @@ const ProfilePage: React.FC = () => {
                           </Label>
                           <Input
                             id="name"
-                            defaultValue="User Name"
+                            defaultValue="John Doe"
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>
@@ -149,7 +151,7 @@ const ProfilePage: React.FC = () => {
                           </Label>
                           <Input
                             id="location"
-                            defaultValue="City, Country"
+                            defaultValue="New York, USA"
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>
@@ -163,6 +165,7 @@ const ProfilePage: React.FC = () => {
                           <Input
                             id="birthday"
                             type="date"
+                            defaultValue="1990-01-01"
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>
@@ -219,13 +222,6 @@ const ProfilePage: React.FC = () => {
                   <h3 className="font-semibold text-lg text-[#265073]">
                     Favorite Genres
                   </h3>
-                  {/* <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-[#265073] hover:text-[#265073]/80"
-                  >
-                    Edit
-                  </Button> */}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {genres.map((genre, index) => (
@@ -286,6 +282,15 @@ const ProfilePage: React.FC = () => {
                 </p>
               </div>
             </div>
+          </div>
+        </Card>
+
+        <Card className="mt-8 p-6 md:p-8 bg-[#FAF7ED] border-none shadow-lg rounded-2xl">
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-[#265073]">
+              Recent Transactions
+            </h2>
+            <TransactionTable transactions={transactions} />
           </div>
         </Card>
       </main>

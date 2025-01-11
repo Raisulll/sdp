@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { suggestedBooks, trendingBooks } from "@/data/books";
 import { useToast } from "@/hooks/use-toast";
+import { type Book } from "@/types/blog";
 import {
   Bookmark,
   Heart,
@@ -23,22 +25,6 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 
-interface BookHeaderProps {
-  id: string;
-  title: string;
-  author: string;
-  coverUrl: string;
-  rating: number;
-  totalRatings: number;
-  totalReviews: number;
-  pages: number;
-  language: string;
-  publishDate: string;
-  description: string;
-  genre: string[];
-  price: number;
-}
-
 interface Review {
   id: string;
   user: {
@@ -49,13 +35,6 @@ interface Review {
   date: string;
   content: string;
   likes: number;
-}
-
-interface SimilarBook {
-  id: string;
-  title: string;
-  coverUrl: string;
-  rating: number;
 }
 
 const BookDetails: React.FC = () => {
@@ -70,21 +49,9 @@ const BookDetails: React.FC = () => {
     setIsReviewModalOpen(false);
   };
 
-  const book: BookHeaderProps = {
-    id: "1",
-    title: "Book Name",
-    author: "Author Name",
-    coverUrl: "https://via.placeholder.com/400x300?text=Book",
-    rating: 4.5,
-    totalRatings: 2419,
-    totalReviews: 1847,
-    pages: 324,
-    language: "English",
-    publishDate: "January 2024",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    genre: ["Fiction", "Fantasy", "Adventure"],
-    price: 19.99,
+  const book: Book = {
+    ...trendingBooks[0],
+    coverImage: trendingBooks[0].coverImage,
   };
 
   const { toast } = useToast();
@@ -122,12 +89,7 @@ const BookDetails: React.FC = () => {
     },
   ];
 
-  const similarBooks: SimilarBook[] = Array(6).fill({
-    id: "1",
-    title: "Similar Book",
-    coverUrl: "https://via.placeholder.com/400x300?text=Book",
-    rating: 4.2,
-  });
+  const similarBooks: Book[] = suggestedBooks;
 
   return (
     <>
@@ -138,13 +100,13 @@ const BookDetails: React.FC = () => {
           <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
             <div className="space-y-4">
               <img
-                src={book.coverUrl}
+                src={book.coverImage}
                 alt={book.title}
                 className="w-full rounded-lg shadow-lg"
               />
 
               <div className="text-2xl font-bold text-center text-[#265073]">
-                ${book.price.toFixed(2)}
+                ${book.price ? book.price.toFixed(2) : "N/A"}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Button className="w-full bg-[#265073] hover:bg-[#265073]/90">
@@ -157,14 +119,6 @@ const BookDetails: React.FC = () => {
                 >
                   <Heart className="h-4 w-4 mr-2" />
                   Wishlist
-                </Button>
-              </div>
-              <div className="flex justify-between">
-                <Button variant="outline" size="icon">
-                  <Share2 className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon">
-                  <Bookmark className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -192,9 +146,11 @@ const BookDetails: React.FC = () => {
                     <span className="ml-2">{book.rating}</span>
                   </div>
                   <span>|</span>
-                  <span>{book.totalRatings.toLocaleString()} Ratings</span>
+                  <span>{book.rating.toLocaleString()} Ratings</span>
                   <span>|</span>
-                  <span>{book.totalReviews.toLocaleString()} Reviews</span>
+                  <span>
+                    {(book.totalReviews ?? 0).toLocaleString()} Reviews
+                  </span>
                   <Button
                     variant="link"
                     className="text-[#265073] p-0 h-auto"
@@ -221,7 +177,7 @@ const BookDetails: React.FC = () => {
                 <div>
                   <span className="text-gray-600">Genre:</span>
                   <span className="ml-2 font-medium">
-                    {book.genre.join(", ")}
+                    {book.genre ? book.genre.join(", ") : "N/A"}
                   </span>
                 </div>
               </div>
@@ -256,7 +212,7 @@ const BookDetails: React.FC = () => {
                     ))}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {book.totalRatings.toLocaleString()} ratings
+                  {book.rating.toLocaleString()} ratings
                 </div>
               </div>
               <div className="space-y-2">
@@ -353,7 +309,7 @@ const BookDetails: React.FC = () => {
                 {similarBooks.map((book, i) => (
                   <div key={`${book.id}-${i}`} className="w-[150px] space-y-2">
                     <img
-                      src={book.coverUrl}
+                      src={book.coverImage}
                       alt={book.title}
                       className="w-full h-[200px] object-cover rounded-lg shadow-md"
                     />

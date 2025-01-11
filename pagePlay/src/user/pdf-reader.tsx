@@ -5,45 +5,15 @@ import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { trendingBooks } from "@/data/books";
 
 // Configure worker for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
 // Sample PDF and Book Data
-const samplePDF = "/Codebook.pdf";
+const samplePDF = "/TheMidNightLibrary.pdf";
 
-interface BookHeaderProps {
-  id: string;
-  title: string;
-  author: string;
-  coverUrl: string;
-  rating: number;
-  totalRatings: number;
-  totalReviews: number;
-  pages: number;
-  language: string;
-  publishDate: string;
-  description: string;
-  genre: string[];
-  price: number;
-}
-
-const book: BookHeaderProps = {
-  id: "1",
-  title: "Book Name",
-  author: "Author Name",
-  coverUrl: "https://via.placeholder.com/400x300?text=Book",
-  rating: 4.5,
-  totalRatings: 2419,
-  totalReviews: 1847,
-  pages: 324,
-  language: "English",
-  publishDate: "January 2024",
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-  genre: ["Fiction", "Fantasy", "Adventure"],
-  price: 19.99,
-};
+const book = trendingBooks[0];
 
 export default function PDFReader() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,7 +50,7 @@ export default function PDFReader() {
           <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
             <div className="space-y-4">
               <img
-                src={book.coverUrl}
+                src={book.coverImage}
                 alt={book.title}
                 className="w-full rounded-lg shadow-lg"
               />
@@ -109,9 +79,7 @@ export default function PDFReader() {
                     <span className="ml-2">{book.rating}</span>
                   </div>
                   <span>|</span>
-                  <span>{book.totalRatings.toLocaleString()} Ratings</span>
-                  <span>|</span>
-                  <span>{book.totalReviews.toLocaleString()} Reviews</span>
+                  <span>{book.totalReviews?.toLocaleString()} Reviews</span>
                 </div>
               </div>
 
@@ -131,7 +99,7 @@ export default function PDFReader() {
                 <div>
                   <span className="text-gray-600">Genre:</span>
                   <span className="ml-2 font-medium">
-                    {book.genre.join(", ")}
+                    {book.genre?.join(", ")}
                   </span>
                 </div>
               </div>

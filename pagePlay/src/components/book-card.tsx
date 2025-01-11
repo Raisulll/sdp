@@ -7,6 +7,7 @@ interface BookCardProps {
   book: Book;
   size?: "small" | "large";
   onClick?: (bookId: string) => void;
+  coverImage: string;
 }
 
 export const BookCard: FC<BookCardProps> = ({
@@ -27,7 +28,7 @@ export const BookCard: FC<BookCardProps> = ({
     >
       <div className="relative w-full h-full">
         <img
-          src={book.cover}
+          src={book.coverImage}
           alt={book.title}
           className="w-full h-full object-cover transition-transform group-hover:scale-105"
         />

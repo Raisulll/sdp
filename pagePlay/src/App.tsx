@@ -18,6 +18,7 @@ import MyBooks from "./user/my-books";
 import PDFReader from "./user/pdf-reader";
 import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
+import AdminDashboard from "./admin/admin-dashboard";
 
 function App() {
   return (
@@ -49,6 +50,9 @@ function App() {
         path="/publisher-transactions"
         element={<PublisherTransactions />}
       />
+
+      {/* admin */}
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
     </Routes>
   );
 }

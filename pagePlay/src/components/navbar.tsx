@@ -58,6 +58,7 @@ const Navbar: React.FC = () => {
                 <NavLink to="/wish-list">Wishlist</NavLink>
                 <NavLink to="/blogs">Blogs</NavLink>
                 <NavLink to="/favourite-books">Favourite Books</NavLink>
+                <NavLink to="/contact">Contact us</NavLink>
                 <NavLink to="/user-profile">Profile</NavLink>
               </>
             ) : null}
@@ -68,15 +69,12 @@ const Navbar: React.FC = () => {
             window.location.pathname === "/requested-books" ||
             window.location.pathname.includes("/publisher-transactions") ? (
               <>
-                <NavLink to="/publisher-profile">Profile</NavLink>
                 <NavLink to="/book-list">Book List</NavLink>
                 <NavLink to="/requested-books">Requested Books</NavLink>
                 <NavLink to="/publisher-transactions">Transactions</NavLink>
+                <NavLink to="/publisher-profile">Profile</NavLink>
               </>
             ) : null}
-
-            {/* common nav */}
-            <NavLink to="/contact">Contact us</NavLink>
           </div>
 
           {/* User Menu */}
@@ -103,13 +101,6 @@ const Navbar: React.FC = () => {
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="font-semibold">User name</span>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-fit mt-1 bg-emerald-600 text-white hover:bg-emerald-700"
-                  >
-                    Edit profile
-                  </Button>
                 </div>
               </div>
               <div className="p-2">

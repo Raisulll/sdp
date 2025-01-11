@@ -16,24 +16,9 @@ import {
   Search,
   XCircle,
 } from "lucide-react";
+import { trendingBooks, suggestedBooks } from "@/data/books";
 
-// Sample book data with different statuses
-const books = [
-  {
-    id: 1,
-    title: "A Perfect Book",
-    author: "Jonathan Starweaver",
-    genre: "Science Fiction",
-    publicationDate: "February 15, 2023",
-    language: "English",
-    isbn: "978-1-234-56789-0",
-    description:
-      "In a world where all human knowledge is stored in a sentient, infinite digital library, archivist Alina uncovers a forbidden section that can alter reality.",
-    status: "pending",
-    submittedDate: "2024-01-15",
-  },
-  // Add more books as needed
-];
+const books = [...trendingBooks, ...suggestedBooks];
 
 const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
@@ -182,17 +167,17 @@ export default function RequestedBooks() {
 
           {/* Books List */}
           <div className="space-y-6">
-            {[...Array(5)].map((_, index) => (
+            {books.map((book, index) => (
               <Card
-                key={index}
+                key={book.id}
                 className="p-6 bg-white shadow-md hover:shadow-lg transition-shadow"
               >
                 <div className="flex gap-6">
                   {/* Book Cover */}
                   <div className="w-48 h-64 flex-shrink-0">
                     <img
-                      src={`https://via.placeholder.com/400x300?text=Book`}
-                      alt={`Book ${index + 1}`}
+                      src={book.coverImage}
+                      alt={book.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
@@ -202,11 +187,9 @@ export default function RequestedBooks() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h2 className="text-xl font-bold text-[#265073] mb-1">
-                          Book Title {index + 1}
+                          {book.title}
                         </h2>
-                        <p className="text-gray-600">
-                          Author: Jonathan Starweaver
-                        </p>
+                        <p className="text-gray-600">Author: {book.author}</p>
                       </div>
                       <StatusBadge
                         status={
@@ -224,19 +207,23 @@ export default function RequestedBooks() {
                         <span className="font-medium text-[#265073]">
                           Genre:
                         </span>{" "}
-                        <span className="text-gray-600">Science Fiction</span>
+                        <span className="text-gray-600">
+                          {book.genre?.join(", ")}
+                        </span>
                       </div>
                       <div>
                         <span className="font-medium text-[#265073]">
                           Publication Date:
                         </span>{" "}
-                        <span className="text-gray-600">February 15, 2023</span>
+                        <span className="text-gray-600">
+                          {book.publishDate}
+                        </span>
                       </div>
                       <div>
                         <span className="font-medium text-[#265073]">
                           Language:
                         </span>{" "}
-                        <span className="text-gray-600">English</span>
+                        <span className="text-gray-600">{book.language}</span>
                       </div>
                       <div>
                         <span className="font-medium text-[#265073]">
@@ -253,11 +240,7 @@ export default function RequestedBooks() {
                     </div>
 
                     <p className="text-gray-600 line-clamp-2">
-                      In a world where all human knowledge is stored in a
-                      sentient, infinite digital library, archivist Alina
-                      uncovers a forbidden section that can alter reality.
-                      Facing AI overlords and a resistance group, she must
-                      navigate moral choices.
+                      {book.description}
                     </p>
 
                     {index === 2 && (

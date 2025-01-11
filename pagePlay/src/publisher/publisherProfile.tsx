@@ -8,7 +8,7 @@ import { EditProfileDialog } from "@/components/edit-publisher-profile";
 import { AddBookDialog } from "@/components/add-book-dialog";
 
 const PUBLISHER_AVATAR =
-  "https://api.dicebear.com/6.x/avataaars/svg?seed=Publisher&background=%23EBF4FF&radius=50";
+  "/BookShop.png";
 
 const PublisherProfile: React.FC = () => {
   return (
@@ -79,32 +79,35 @@ const PublisherProfile: React.FC = () => {
                       Publisher Name
                     </label>
                     <p className="text-[#265073] font-medium">
-                      Publisher Name Here
+                      Penguin Random House
                     </p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">
                       Contact Number
                     </label>
-                    <p className="text-[#265073] font-medium">+1 234 567 890</p>
+                    <p className="text-[#265073] font-medium">+1 212-782-9000</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">
                       Email Address
                     </label>
                     <p className="text-[#265073] font-medium">
-                      publisher@example.com
+                      contact@penguinrandomhouse.com
                     </p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Location</label>
-                    <p className="text-[#265073] font-medium">City, Country</p>
+                    <p className="text-[#265073] font-medium">New York, USA</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Description</label>
                     <p className="text-[#265073] font-medium">
-                      A brief description about the publisher and their work in
-                      the industry.
+                      Penguin Random House is the international home to nearly
+                      275 editorially and creatively independent publishing
+                      imprints. Together, our imprints publish more than 70,000
+                      digital and 15,000 print titles annually, with more than
+                      100,000 eBooks available worldwide.
                     </p>
                   </div>
                 </div>

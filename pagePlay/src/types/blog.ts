@@ -38,6 +38,12 @@ export interface Book {
   description: string;
   pdfUrl: string;
   audioUrl?: string;
+  price?: number;
+  totalReviews?: number;
+  language?: string;
+  publishDate?: string;
+  genre?: string[];
+  pages?: number;
 }
 
 export interface BookDetails {
@@ -79,3 +85,10 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
 }
 
+export interface Transaction {
+  id: string;
+  bookName: string;
+  publisherName: string;
+  date: string;
+  amount: number;
+}

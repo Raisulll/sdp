@@ -3,39 +3,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
 import React from "react";
 import Navbar from "@/components/navbar";
+import { trendingBooks, suggestedBooks } from "@/data/books";
 
-interface WishlistItem {
-  id: string;
-  title: string;
-  author: string;
-  coverUrl: string;
-  price: number;
-  description: string;
-}
+const books = [...trendingBooks, ...suggestedBooks];
 
 const WishlistPage: React.FC = () => {
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
 
-  const wishlistItems: WishlistItem[] = [
-    {
-      id: "1",
-      title: "Book Name",
-      author: "Author Name",
-      coverUrl: "https://via.placeholder.com/400x300?text=Book",
-      price: 86.73,
-      description:
-        "Here's a thousand random words explaining why this book is great. Some filters, some tags, blah blah blah...",
-    },
-    {
-      id: "2",
-      title: "Book Name",
-      author: "Author Name",
-      coverUrl: "https://via.placeholder.com/400x300?text=Book",
-      price: 75.6,
-      description:
-        "Here's a thousand random words explaining why this book is great. Some filters, some tags, blah blah blah...",
-    },
-  ];
+  const wishlistItems = books.slice(0, 5); // Example: taking first 5 books as wishlist items
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -56,7 +31,7 @@ const WishlistPage: React.FC = () => {
 
   const subtotal = wishlistItems
     .filter((item) => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + item.price, 0);
+    .reduce((sum, item) => sum + (item.price ?? 0), 0);
 
   const onlineFee = 5;
   const total = subtotal + onlineFee;
@@ -91,7 +66,7 @@ const WishlistPage: React.FC = () => {
                     onCheckedChange={() => handleSelectItem(item.id)}
                   />
                   <img
-                    src={item.coverUrl}
+                    src={item.coverImage}
                     alt={item.title}
                     className="w-24 h-32 object-cover rounded-md"
                   />
@@ -113,7 +88,7 @@ const WishlistPage: React.FC = () => {
                       {item.description}
                     </p>
                     <div className="mt-2 font-semibold">
-                      ${item.price.toFixed(2)}
+                      ${item.price?.toFixed(2)}
                     </div>
                   </div>
                 </div>

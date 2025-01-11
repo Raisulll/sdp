@@ -8,6 +8,7 @@ import { WelcomeCard } from "@/components/welcome-card";
 import { suggestedBooks, trendingBooks } from "@/data/books";
 import { Search } from "lucide-react";
 import { type FC } from "react";
+import { useNavigate } from "react-router-dom";
 
 const socialLinks = {
   facebook: "https://facebook.com/pageplay",
@@ -16,9 +17,10 @@ const socialLinks = {
 };
 
 const HomePage: FC = () => {
+  const navigate = useNavigate();
+
   const handleBookClick = (bookId: string) => {
-    // Handle book click navigation
-    console.log(`Navigating to book: ${bookId}`);
+    navigate(`/book-details`);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +86,7 @@ const HomePage: FC = () => {
                     key={book.id}
                     book={book}
                     onClick={handleBookClick}
+                    coverImage={book.coverImage}
                   />
                 ))}
               </div>

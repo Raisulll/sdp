@@ -1,8 +1,13 @@
-import React, { useState } from "react";
-import { Star } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Star } from "lucide-react";
+import React, { useState } from "react";
 
 interface WriteReviewModalProps {
   isOpen: boolean;
@@ -10,7 +15,8 @@ interface WriteReviewModalProps {
   book: {
     title: string;
     author: string;
-    coverUrl: string;
+    coverImage: string;
+    rating: number;
   };
 }
 
@@ -38,7 +44,7 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
           <img
-            src={book.coverUrl}
+            src={book.coverImage}
             alt={book.title}
             className="w-24 h-32 object-cover rounded-md shadow-md"
           />

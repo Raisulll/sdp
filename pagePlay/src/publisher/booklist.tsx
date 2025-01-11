@@ -9,8 +9,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Search } from "lucide-react";
+import { trendingBooks, suggestedBooks } from "@/data/books";
 
 export default function BookList() {
+  const books = [...trendingBooks, ...suggestedBooks];
+
   return (
     <div className="min-h-screen bg-[#E5EADD]">
       <Navbar />
@@ -158,14 +161,14 @@ export default function BookList() {
 
           {/* Books Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {[...Array(15)].map((_, index) => (
+            {books.map((book) => (
               <div
-                key={index}
+                key={book.id}
                 className="group relative aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
               >
                 <img
-                  src={`https://via.placeholder.com/400x300?text=Book`}
-                  alt={`Book ${index + 1}`}
+                  src={book.coverImage}
+                  alt={book.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

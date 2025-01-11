@@ -5,6 +5,7 @@ import { type Book } from "@/types/blog";
 import { BookCard } from "@/components/book-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useEffect, useCallback } from "react";
 
 interface BookCarouselProps {
   books: Book[];
@@ -22,12 +23,19 @@ export function BookCarousel({
     loop: true,
   });
 
-  const scrollPrev = React.useCallback(() => {
+  const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
   }, [emblaApi]);
 
-  const scrollNext = React.useCallback(() => {
+  const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (emblaApi) emblaApi.scrollNext();
+    }, 4000);
+    return () => clearInterval(interval);
   }, [emblaApi]);
 
   return (
@@ -39,7 +47,12 @@ export function BookCarousel({
               key={book.id}
               className="flex-[0_0_100%] min-w-0 pl-4 first:pl-0"
             >
-              <BookCard book={book} size="large" onClick={onBookClick} />
+              <BookCard
+                book={book}
+                size="large"
+                onClick={onBookClick}
+                coverImage={book.coverImage}
+              />
             </div>
           ))}
         </div>
