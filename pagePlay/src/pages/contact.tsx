@@ -13,10 +13,12 @@ export default function ContactUs() {
         </h1>
 
         <div className="grid md:grid-cols-2 gap-8 items-start justify-center min-h-[calc(100vh-10rem)]">
-          <ContactInfo />
+          <div className="mt-48">
+            <ContactInfo />
+          </div>
           <ContactForm />
         </div>
-      </main>
+            </main>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar";
 import { Toolbar } from "@/components/pdf-reader/toolbar";
 import { trendingBooks } from "@/data/books";
+import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -107,6 +108,15 @@ export default function PDFReader() {
               <div>
                 <h2 className="font-semibold mb-2">Description</h2>
                 <p className="text-gray-600">{book.description}</p>
+              </div>
+
+              <div className="flex gap-4">
+                <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]">
+                  Currently Reading
+                </Button>
+                <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]">
+                  Finish
+                </Button>
               </div>
             </div>
           </div>

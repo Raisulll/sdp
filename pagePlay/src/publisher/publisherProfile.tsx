@@ -1,14 +1,13 @@
+import { AddBookDialog } from "@/components/add-book-dialog";
+import { EditProfileDialog } from "@/components/edit-publisher-profile";
 import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Camera, Plus } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Camera, Plus } from "lucide-react";
 import React from "react";
-import { EditProfileDialog } from "@/components/edit-publisher-profile";
-import { AddBookDialog } from "@/components/add-book-dialog";
 
-const PUBLISHER_AVATAR =
-  "/BookShop.png";
+const PUBLISHER_AVATAR = "/BookShop.png";
 
 const PublisherProfile: React.FC = () => {
   return (
@@ -86,7 +85,9 @@ const PublisherProfile: React.FC = () => {
                     <label className="text-sm text-gray-500">
                       Contact Number
                     </label>
-                    <p className="text-[#265073] font-medium">+1 212-782-9000</p>
+                    <p className="text-[#265073] font-medium">
+                      +1 212-782-9000
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">
@@ -123,7 +124,7 @@ const PublisherProfile: React.FC = () => {
                 </div>
                 <div className="bg-[#a4c0ed] px-6 py-4 rounded-xl text-center transition-transform hover:scale-105">
                   <div className="text-2xl font-bold text-[#265073]">1.2K</div>
-                  <div className="text-sm font-medium">Total Downloads</div>
+                  <div className="text-sm font-medium">Total Sells</div>
                 </div>
               </div>
             </div>
