@@ -51,6 +51,7 @@
     "react-pdf": "^9.2.1",
     "react-perfect-scrollbar": "^1.5.8",
     "react-router-dom": "^7.1.1",
+    "react-toastify": "^11.0.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vite-plugin-vercel": "^9.0.4",

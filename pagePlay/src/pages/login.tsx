@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 import emailIcon from "../assets/email-icon.svg";
 import bookStack from "../assets/large-book.svg";
 import lockIcon from "../assets/lock-icon.svg";
@@ -21,16 +22,30 @@ export default function Login() {
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Login attempt with:", formData);
-    navigate("/");
-  };
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login attempt with:", formData);
-    navigate("/user-profile");
+    const result = await fetch("http://localhost:5000/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    const data = await result.json();
+    console.log(data);
+    if(data.role === "user") {
+      navigate("/user-profile");
+    }
+    else if(data.role === "publisher") {
+      navigate("/publisher-profile");
+    }
+    else if(data.role === "admin") {
+      navigate("/admin-dashboard");
+    }
+    else {
+      console.log("Invalid role");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +130,6 @@ export default function Login() {
                 <Button
                   type="submit"
                   className="w-full sm:w-[174px] h-[49px] bg-[#f5ffde] hover:bg-[#f5ffde]/90 text-black font-medium text-lg sm:text-xl rounded-[46px]"
-                  onClick={handleLogin}
                 >
                   Login
                 </Button>
@@ -130,10 +144,7 @@ export default function Login() {
 
                 <p className="text-lg font-medium">
                   New User?{" "}
-                  <Link
-                    to="/signup"
-                    className="text-[#265073] hover:underline"
-                  >
+                  <Link to="/signup" className="text-[#265073] hover:underline">
                     Sign Up
                   </Link>
                 </p>
