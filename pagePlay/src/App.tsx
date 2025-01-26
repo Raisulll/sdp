@@ -12,7 +12,7 @@ import RequestedBooks from "./publisher/requested-books";
 import PublisherTransactions from "./publisher/transaction";
 import Blogs from "./user/Blogs";
 import BookDetails from "./user/book-details";
-import ChatBot from "./user/chatBot";
+import ChatBot from "./user/chatBot"; 
 import CheckoutPage from "./user/checkoutPage";
 import FavouriteBooks from "./user/favourite-books";
 import MyBooks from "./user/my-books";
