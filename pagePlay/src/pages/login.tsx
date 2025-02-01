@@ -55,6 +55,12 @@ export default function Login() {
     }));
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit(e as unknown as React.FormEvent);
+    }
+  };
+
   return (
     <>
       <Navbar_guest />
@@ -79,6 +85,7 @@ export default function Login() {
 
             <form
               onSubmit={handleSubmit}
+              onKeyPress={handleKeyPress}
               className="space-y-6 max-w-[60%] sm:max-w-[500px] mx-auto"
             >
               <div className="relative">

@@ -17,7 +17,7 @@ import {
   User,
 } from "lucide-react";
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link, useLocation } from "react-router-dom"; // Import Link and useLocation from react-router-dom
 import { MobileNav } from "./mobile-nav";
 
 const AVATAR_URL =
@@ -25,6 +25,7 @@ const AVATAR_URL =
 
 // Navbar Component (Functional Component with TypeScript)
 const Navbar: React.FC = () => {
+  const location = useLocation(); // Get the current location
   return (
     <div className="w-full bg-[#E5EADD] fixed top-0 z-50 border-b border-[#265073]/10 backdrop-blur-sm">
       <nav className="max-w-7xl mx-auto px-4 py-3">
@@ -52,14 +53,14 @@ const Navbar: React.FC = () => {
             window.location.pathname === "/chat-bot" ||
             window.location.pathname === "/favourite-books" ? (
               <>
-                <NavLink to="/home">Home</NavLink>
-                <NavLink to="/my-books">My Books</NavLink>
-                <NavLink to="/chat-bot">Chatbot</NavLink>
-                <NavLink to="/wish-list">Wishlist</NavLink>
-                <NavLink to="/blogs">Blogs</NavLink>
-                <NavLink to="/favourite-books">Favourite Books</NavLink>
-                <NavLink to="/contact">Contact us</NavLink>
-                <NavLink to="/user-profile">Profile</NavLink>
+                <NavLink to="/home" isActive={location.pathname === "/home"}>Home</NavLink>
+                <NavLink to="/my-books" isActive={location.pathname === "/my-books"}>My Books</NavLink>
+                <NavLink to="/chat-bot" isActive={location.pathname === "/chat-bot"}>Chatbot</NavLink>
+                <NavLink to="/wish-list" isActive={location.pathname === "/wish-list"}>Wishlist</NavLink>
+                <NavLink to="/blogs" isActive={location.pathname === "/blogs"}>Blogs</NavLink>
+                <NavLink to="/favourite-books" isActive={location.pathname === "/favourite-books"}>Favourite Books</NavLink>
+                <NavLink to="/contact" isActive={location.pathname === "/contact"}>Contact us</NavLink>
+                <NavLink to="/user-profile" isActive={location.pathname === "/user-profile"}>Profile</NavLink>
               </>
             ) : null}
 
@@ -69,10 +70,10 @@ const Navbar: React.FC = () => {
             window.location.pathname === "/requested-books" ||
             window.location.pathname.includes("/publisher-transactions") ? (
               <>
-                <NavLink to="/book-list">Book List</NavLink>
-                <NavLink to="/requested-books">Requested Books</NavLink>
-                <NavLink to="/publisher-transactions">Transactions</NavLink>
-                <NavLink to="/publisher-profile">Profile</NavLink>
+                <NavLink to="/book-list" isActive={location.pathname === "/book-list"}>Book List</NavLink>
+                <NavLink to="/requested-books" isActive={location.pathname === "/requested-books"}>Requested Books</NavLink>
+                <NavLink to="/publisher-transactions" isActive={location.pathname.includes("/publisher-transactions")}>Transactions</NavLink>
+                <NavLink to="/publisher-profile" isActive={location.pathname === "/publisher-profile"}>Profile</NavLink>
               </>
             ) : null}
           </div>
@@ -140,13 +141,16 @@ const Navbar: React.FC = () => {
 interface NavLinkProps {
   to: string;
   children: React.ReactNode;
+  isActive?: boolean; // Add isActive prop
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ to, children }) => {
+const NavLink: React.FC<NavLinkProps> = ({ to, children, isActive }) => {
   return (
     <Link
       to={to}
-      className="px-4 py-2 text-sm font-medium text-gray-700 rounded-full hover:bg-[#265073]/10 hover:text-[#265073] transition-colors"
+      className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+        isActive ? "bg-[#265073]/10 text-[#265073]" : "text-gray-700 hover:bg-[#265073]/10 hover:text-[#265073]"
+      }`}
     >
       {children}
     </Link>

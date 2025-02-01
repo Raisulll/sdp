@@ -2,6 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import authRoutes from "./routes/auth.js";
+import publisherRoutes from "./routes/publisherApis.js";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/publisher", publisherRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

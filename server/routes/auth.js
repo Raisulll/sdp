@@ -3,6 +3,7 @@ import sql from "../db.js";
 
 const router = express.Router();
 
+// signup api for users
 router.post("/signup", async (req, res) => {
   const {
     firstName,
