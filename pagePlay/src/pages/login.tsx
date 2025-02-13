@@ -42,7 +42,7 @@ export default function Login() {
       navigate("/publisher-profile");
     }
     else if(data.role === "admin") {
-      navigate("/admin-dashboard");
+      navigate("/admin");
     }
     else {
       console.log("Invalid role");
