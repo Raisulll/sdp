@@ -34,6 +34,7 @@ export default function Login() {
     });
     const data = await result.json();
     console.log(data);
+    
     if(data.role === "user") {
       navigate("/user-profile");
     }

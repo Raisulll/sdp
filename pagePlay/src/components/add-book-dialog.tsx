@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../Auth/SupabaseClient"; 
 
 export function AddBookDialog() {
   // Define available genres
@@ -50,6 +51,33 @@ export function AddBookDialog() {
   const coverInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  const fileUpload = async (file: File) => {
+    const fileName = `${Date.now()}-${file.name}`; 
+
+    fileName.replace(/\s+/g, "-").toLowerCase();
+    console.log("file: ", fileName);
+
+    const { data, error } = await supabase.storage
+      .from("books")
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) {
+      console.error("Upload error:", error);
+      alert("Failed to upload image.");
+      return;
+    }
+    console.log(data);
+    const { data: publicUrlData } = supabase.storage
+      .from("books")
+      .getPublicUrl(fileName);
+    const publicUrl = publicUrlData.publicUrl;
+    console.log("Public URL:", publicUrl);
+    return publicUrl;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -70,11 +98,30 @@ export function AddBookDialog() {
       formData.append("pdfFile", pdfFile);
     }
 
+    const coverUrl = coverFile ? await fileUpload(coverFile) : null;
+    const pdfUrl = pdfFile ? await fileUpload(pdfFile) : null;
+
+    const data ={
+      authorName: authorName,
+      bookTitle: bookTitle,
+      publicationDate: publicationDate,
+      isbn: isbn,
+      genre: genre,
+      description: description,
+      publisherId: "1",
+      coverUrl: coverUrl,
+      pdfUrl: pdfUrl,
+    }
+    console.log("Data: ", data);
+
     console.log("Form Data ready to submit");
     try {
       const result = await fetch("http://localhost:5000/publisher/addBook", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
       const responseData = await result.json();

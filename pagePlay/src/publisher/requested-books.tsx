@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { suggestedBooks, trendingBooks } from "@/data/books";
 import {
   AlertCircle,
   CheckCircle2,
@@ -16,7 +17,6 @@ import {
   Search,
   XCircle,
 } from "lucide-react";
-import { trendingBooks, suggestedBooks } from "@/data/books";
 
 const books = [...trendingBooks, ...suggestedBooks];
 

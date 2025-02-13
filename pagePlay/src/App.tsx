@@ -1,5 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import AdminDashboard from "./admin/admin-dashboard";
+import AdminDashboard from "./admin/AdminDashboard";
+import PendingBooks from "./admin/PendingBooks";
+import PublishersList from "./admin/PublisherList";
+import Reports from "./admin/Report";
+import Transactions from "./admin/Transactions";
+import UsersList from "./admin/UserList";
 import AboutUs from "./pages/aboutUs";
 import ContactUs from "./pages/contact";
 import Home from "./pages/home";
@@ -12,7 +17,7 @@ import RequestedBooks from "./publisher/requested-books";
 import PublisherTransactions from "./publisher/transaction";
 import Blogs from "./user/Blogs";
 import BookDetails from "./user/book-details";
-import ChatBot from "./user/chatBot"; 
+import ChatBot from "./user/chatBot";
 import CheckoutPage from "./user/checkoutPage";
 import FavouriteBooks from "./user/favourite-books";
 import MyBooks from "./user/my-books";
@@ -52,7 +57,12 @@ function App() {
       />
 
       {/* admin */}
-      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<UsersList />} />
+      <Route path="/admin/publishers" element={<PublishersList />} />
+      <Route path="/admin/transactions" element={<Transactions />} />
+      <Route path="/admin/reports" element={<Reports />} />
+      <Route path="/admin/pending-books" element={<PendingBooks />} />
     </Routes>
   );
 }

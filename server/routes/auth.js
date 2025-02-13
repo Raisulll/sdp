@@ -43,6 +43,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+//login api for users
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   console.log("req.body", req.body);
@@ -54,14 +55,14 @@ router.post("/login", async (req, res) => {
     if (user[0].role === "user") {
       const user = await sql`select * from users where email = ${email}`;
       if (user[0].password === password) {
-        return res.status(200).json({ message: "User logged in successfully", userId: user[0].id, role: "user" });
+        return res.status(200).json({userId: user[0].id, role: "user" });
       } else {
         return res.status(400).json("Password is incorrect");
       }
     } else if (user[0].role === "admin") {
       const admin = await sql`select * from admin where email = ${email}`;
       if (admin[0].password === password) {
-        return res.status(200).json({ message: "Admin logged in successfully", role: "admin" });
+        return res.status(200).json({role: "admin", adminId: admin[0].id});
       } else {
         return res.status(400).json("Password is incorrect");
       }
@@ -69,7 +70,7 @@ router.post("/login", async (req, res) => {
       const publisher =
         await sql`select * from publisher where email = ${email}`;
       if (publisher[0].password === password) {
-        return res.status(200).json({message: "Publisher logged in successfully",publisherId: publisher[0].id, role: "publisher"});
+        return res.status(200).json({publisherId: publisher[0].id, role: "publisher"});
       } else {
         return res.status(400).json("Password is incorrect");
       }
