@@ -22,7 +22,8 @@ import {
 } from "lucide-react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import supabase from "../../Auth/SupabaseClient"; 
+import supabase from "../../Auth/SupabaseClient";
+import * as pdfjsLib from "pdfjs-dist";
 
 export function AddBookDialog() {
   // Define available genres
@@ -47,6 +48,10 @@ export function AddBookDialog() {
   const [description, setDescription] = useState("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+
+  const user = localStorage.getItem("user");
+  const userObj = JSON.parse(user || "{}");
+  const publisherId = userObj.publisherId;
 
   const coverInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -90,7 +95,7 @@ export function AddBookDialog() {
     formData.append("genre", genre);
     formData.append("description", description);
     // Replace with the actual publisher ID if available (here we use a dummy value)
-    formData.append("publisherId", "1");
+    formData.append("publisherId", publisherId);
     if (coverFile) {
       formData.append("coverFile", coverFile);
     }
@@ -100,6 +105,12 @@ export function AddBookDialog() {
 
     const coverUrl = coverFile ? await fileUpload(coverFile) : null;
     const pdfUrl = pdfFile ? await fileUpload(pdfFile) : null;
+    let pages = 0;
+    if (pdfFile) {
+      const pdfData = await pdfFile.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+      pages = pdf.numPages;
+    }
 
     const data ={
       authorName: authorName,
@@ -108,9 +119,10 @@ export function AddBookDialog() {
       isbn: isbn,
       genre: genre,
       description: description,
-      publisherId: "1",
+      publisherId: publisherId,
       coverUrl: coverUrl,
       pdfUrl: pdfUrl,
+      pages: pages,
     }
     console.log("Data: ", data);
 

@@ -4,6 +4,7 @@ import express from "express";
 import authRoutes from "./routes/auth.js";
 import publisherRoutes from "./routes/publisherApis.js";
 import adminRoutes from "./routes/adminApis.js";
+import userRoutes from "./routes/userApis.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/publisher", publisherRoutes);
 app.use("/admin", adminRoutes);
+app.use("/user", userRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

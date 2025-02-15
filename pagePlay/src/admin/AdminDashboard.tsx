@@ -7,9 +7,11 @@ const AdminDashboard = () => {
       <Sidebar />
 
       <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold text-[#265073] mb-6">
-          Admin Dashboard
-        </h1>
+        <Link to="/admin">
+          <h1 className="text-3xl font-bold text-[#265073] mb-6">
+            Admin Dashboard
+          </h1>
+        </Link>
 
         {/* Section 1: Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

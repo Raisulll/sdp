@@ -2,13 +2,13 @@ import express from "express";
 import sql from "../db.js";
 
 const router = express.Router();
-
+  
 // pending books api for admin
 router.get("/pendingBooks", async (req, res) => {
-  console.log("Admin pending books api");
+  // console.log("Admin pending books api");
   try {
     const pendingBooks =
-      await sql`select b.id, title, author,genre, isbn, p.name, publisher_id, b.description, cover_image_url from books b, publisher p where b.publisher_id = p.id and status = 'pending'`;
+      await sql`select b.id,price, title, author,genre, isbn, p.name, publisher_id, b.description, cover_image_url from books b, publisher p where b.publisher_id = p.id and status = 'pending'`;
     res.status(200).json(pendingBooks);
   } catch (error) {
     console.error(error);

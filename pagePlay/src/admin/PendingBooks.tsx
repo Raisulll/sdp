@@ -115,6 +115,7 @@ const PendingBooks = () => {
                 <p className="text-gray-600">Author: {book.author}</p>
                 <p className="text-gray-600">Genre: {book.genre}</p>
                 <p className="text-gray-600">ISBN: {book.isbn}</p>
+                <p className="text-gray-600">Price: {book.price}$</p>
                 <p className="text-gray-600">
                   Publisher: <b>{book.name}</b>
                 </p>
@@ -126,13 +127,17 @@ const PendingBooks = () => {
                 <div className="mt-4 flex gap-4">
                   <button
                     className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                    onClick={() => handleAction(book.id, book.publisher_id, "approve")}
+                    onClick={() =>
+                      handleAction(book.id, book.publisher_id, "approve")
+                    }
                   >
                     Accept
                   </button>
                   <button
                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                    onClick={() => handleAction(book.id,book.publisher_id, "reject")}
+                    onClick={() =>
+                      handleAction(book.id, book.publisher_id, "reject")
+                    }
                   >
                     Reject
                   </button>

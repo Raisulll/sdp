@@ -33,6 +33,8 @@ export default function Login() {
       body: JSON.stringify(formData),
     });
     const data = await result.json();
+    // set the data to local storage
+    localStorage.setItem("user", JSON.stringify(data));
     console.log(data);
     
     if(data.role === "user") {

@@ -1,35 +1,79 @@
 import Navbar from "@/components/navbar";
 import { Toolbar } from "@/components/pdf-reader/toolbar";
-import { trendingBooks } from "@/data/books";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { useParams } from "react-router-dom";
 
 // Configure worker for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
-// Sample PDF and Book Data
-const samplePDF = "/TheMidNightLibrary.pdf";
-
-const book = trendingBooks[0];
+export interface Book {
+  id: number;
+  title: string;
+  author: string;
+  publication_date: string;
+  isbn: string;
+  genre: string;
+  description: string;
+  cover_image_url: string;
+  status: string;
+  publisher_id: number;
+  name: string;
+  rating: number;
+  total_reviews: number;
+  pages: number;
+  pdf_file_url: string;
+}
 
 export default function PDFReader() {
+  const { bookId } = useParams<{ bookId: string }>();
+  const [book, setBook] = useState<Book | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [zoom, setZoom] = useState(1);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        console.log("Fetching book with ID:", bookId);
+        const response = await fetch(
+          `http://localhost:5000/user/pdfUrl?bookId=${bookId}`
+        );
+        if (!response.ok) {
+          throw new Error(`Failed to fetch book data: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log("Fetched book data:", data);
+        data.forEach((book: Book) => {
+          const date = new Date(book.publication_date);
+          book.publication_date = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+        });
+        setBook(data);
+        console.log("Book data:", book);
+      } catch (error) {
+        console.error("Error fetching book data:", error);
+      }
+    };
+    fetchBook();
+  }, [bookId]);
+
   const handleZoomIn = () => setZoom((prev) => Math.min(2, prev + 0.1)); // Max zoom level
   const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.1)); // Min zoom level
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    console.log("Number of pages in PDF:", numPages);
     setNumPages(numPages);
   };
 
-  // Scroll the active page to the top of the sidebar
   useEffect(() => {
     if (sidebarRef.current) {
       const activeThumbnail = sidebarRef.current.children[currentPage - 1];
@@ -42,6 +86,14 @@ export default function PDFReader() {
     }
   }, [currentPage]);
 
+  if (!book) {
+    return <div>Loading...</div>;
+  }
+
+  // if (!book.title || !book.author || !book.pdf_file_url) {
+  //   return <div>Error: Invalid book data</div>;
+  // }
+
   return (
     <>
       <Navbar />
@@ -51,18 +103,19 @@ export default function PDFReader() {
           <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
             <div className="space-y-4">
               <img
-                src={book.coverImage}
-                alt={book.title}
+                src={book[0].cover_image_url}
+                alt={book[0].title}
                 className="w-full rounded-lg shadow-lg"
               />
             </div>
-
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-bold text-[#265073] mb-2">
-                  {book.title}
+                  {book[0].title}
                 </h1>
-                <p className="text-lg text-gray-600 mb-4">by {book.author}</p>
+                <p className="text-lg text-gray-600 mb-4">
+                  by {book[0].author}
+                </p>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center">
                     {Array(5)
@@ -71,45 +124,38 @@ export default function PDFReader() {
                         <Star
                           key={i}
                           className={`h-4 w-4 ${
-                            i < Math.floor(book.rating)
+                            i < Math.floor(book[0].rating)
                               ? "text-yellow-400 fill-current"
                               : "text-gray-300"
                           }`}
                         />
                       ))}
-                    <span className="ml-2">{book.rating}</span>
+                    <span className="ml-2">{book[0].rating}</span>
                   </div>
                   <span>|</span>
-                  <span>{book.totalReviews?.toLocaleString()} Reviews</span>
+                  <span>{book[0].total_reviews} Reviews</span>
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-600">Pages:</span>
-                  <span className="ml-2 font-medium">{book.pages}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600">Language:</span>
-                  <span className="ml-2 font-medium">{book.language}</span>
+                  <span className="ml-2 font-medium">{book[0].pages}</span>
                 </div>
                 <div>
                   <span className="text-gray-600">Published:</span>
-                  <span className="ml-2 font-medium">{book.publishDate}</span>
+                  <span className="ml-2 font-medium">
+                    {book[0].publication_date}
+                  </span>
                 </div>
                 <div>
                   <span className="text-gray-600">Genre:</span>
-                  <span className="ml-2 font-medium">
-                    {book.genre?.join(", ")}
-                  </span>
+                  <span className="ml-2 font-medium">{book[0].genre}</span>
                 </div>
               </div>
-
               <div>
                 <h2 className="font-semibold mb-2">Description</h2>
-                <p className="text-gray-600">{book.description}</p>
+                <p className="text-gray-600">{book[0].description}</p>
               </div>
-
               <div className="flex gap-4">
                 <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]">
                   Currently Reading
@@ -120,7 +166,6 @@ export default function PDFReader() {
               </div>
             </div>
           </div>
-
           {/* Reader Container */}
           <div className="grid grid-cols-[250px_1fr] gap-6">
             {/* Thumbnails Sidebar */}
@@ -129,19 +174,18 @@ export default function PDFReader() {
               className="bg-white rounded-lg shadow-lg p-2 overflow-auto"
               style={{ height: "calc(100vh - 16rem)" }}
             >
-              {Array.from(new Array(numPages), (_, index) => (
+              {Array.from(new Array(numPages || 0), (_, index) => (
                 <div
                   key={`thumbnail_${index + 1}`}
                   className="p-2 rounded-md cursor-pointer hover:bg-gray-100"
                   onClick={() => setCurrentPage(index + 1)}
                 >
-                  <Document file={samplePDF}>
+                  <Document file={book[0].pdf_file_url}>
                     <Page pageNumber={index + 1} width={210} />
                   </Document>
                 </div>
               ))}
             </div>
-
             {/* PDF Viewer */}
             <div className="bg-white rounded-lg shadow-lg overflow-hidden relative">
               <Toolbar
@@ -153,7 +197,6 @@ export default function PDFReader() {
                 onToggleAudio={() => {}}
                 isAudioPlaying={false}
               />
-
               <div
                 className="overflow-auto"
                 style={{
@@ -169,7 +212,7 @@ export default function PDFReader() {
                   }}
                 >
                   <Document
-                    file={samplePDF}
+                    file={book[0].pdf_file_url}
                     onLoadSuccess={onDocumentLoadSuccess}
                     loading={<p>Loading PDF...</p>}
                   >

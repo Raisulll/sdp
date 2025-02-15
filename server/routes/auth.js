@@ -55,14 +55,14 @@ router.post("/login", async (req, res) => {
     if (user[0].role === "user") {
       const user = await sql`select * from users where email = ${email}`;
       if (user[0].password === password) {
-        return res.status(200).json({userId: user[0].id, role: "user" });
+        return res.status(200).json({userId: user[0].id, role: "user", image : user[0].image});
       } else {
         return res.status(400).json("Password is incorrect");
       }
     } else if (user[0].role === "admin") {
       const admin = await sql`select * from admin where email = ${email}`;
       if (admin[0].password === password) {
-        return res.status(200).json({role: "admin", adminId: admin[0].id});
+        return res.status(200).json({role: "admin", adminId: admin[0].id, image: admin[0].image});
       } else {
         return res.status(400).json("Password is incorrect");
       }
@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
       const publisher =
         await sql`select * from publisher where email = ${email}`;
       if (publisher[0].password === password) {
-        return res.status(200).json({publisherId: publisher[0].id, role: "publisher"});
+        return res.status(200).json({publisherId: publisher[0].id, role: "publisher", image: publisher[0].image});
       } else {
         return res.status(400).json("Password is incorrect");
       }

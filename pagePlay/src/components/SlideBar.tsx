@@ -1,9 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
   return (
     <div className="w-64 bg-[#265073] min-h-screen text-white p-5">
-      <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+      <Link to="/admin" className="block mb-6">
+        <h2 className="text-2xl font-bold">Admin Panel</h2>
+      </Link>
       <ul className="space-y-3">
         <li>
           <Link
@@ -44,6 +52,14 @@ const Sidebar = () => {
           >
             Pending Books
           </Link>
+        </li>
+        <li>
+          <button
+            onClick={handleLogout}
+            className="block w-full text-left hover:bg-[#1B3B5A] p-2 rounded text-red-500"
+          >
+            Logout
+          </button>
         </li>
       </ul>
     </div>

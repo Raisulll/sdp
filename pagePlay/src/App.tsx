@@ -43,7 +43,7 @@ function App() {
       <Route path="/check-out" element={<CheckoutPage />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/pdf-reader" element={<PDFReader />} />
+      <Route path="/pdf-reader/:bookId" element={<PDFReader />} />
       <Route path="/favourite-books" element={<FavouriteBooks />} />
       <Route path="/chat-bot" element={<ChatBot />} />
 
