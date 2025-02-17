@@ -37,7 +37,7 @@ function App() {
 
       {/* user */}
       <Route path="/user-profile" element={<UserProfile />} />
-      <Route path="/book-details" element={<BookDetails />} />
+      <Route path="/book-details/:bookId/:publisherId" element={<BookDetails />} />
       <Route path="/my-books" element={<MyBooks />} />
       <Route path="/wish-list" element={<WishlistPage />} />
       <Route path="/check-out" element={<CheckoutPage />} />

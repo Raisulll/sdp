@@ -13,12 +13,16 @@ interface WriteReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   book: {
+    id: number;
     title: string;
     author: string;
-    coverImage: string;
+    cover_image_url: string;
     rating: number;
+    publisher_id: number;
   };
 }
+
+const localdata = JSON.parse(localStorage.getItem("user") || "{}");
 
 export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
   isOpen,
@@ -31,8 +35,27 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle review submission
-    console.log({ rating, review });
+    // Submit review data
+    const data = {
+      rating: rating,
+      comment: review,
+      bookId: book[0].id,
+      publisherId: book[0].publisher_id,
+      userId: localdata.userId,
+    };
+    fetch("http://localhost:5000/user/addReview", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        console.log("Review submitted successfully");
+      } else {
+        console.error("Failed to submit review");
+      }
+    });
     onClose();
   };
 
@@ -44,13 +67,13 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
           <img
-            src={book.coverImage}
-            alt={book.title}
+            src={book[0].cover_image_url}
+            alt={book[0].title}
             className="w-24 h-32 object-cover rounded-md shadow-md"
           />
           <div className="text-center">
-            <h3 className="font-semibold">{book.title}</h3>
-            <p className="text-sm text-gray-600">{book.author}</p>
+            <h3 className="font-semibold">{book[0].title}</h3>
+            <p className="text-sm text-gray-600">{book[0].author}</p>
           </div>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => (

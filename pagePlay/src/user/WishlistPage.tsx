@@ -1,40 +1,102 @@
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
-import React from "react";
 import Navbar from "@/components/navbar";
-import { trendingBooks, suggestedBooks } from "@/data/books";
 
-const books = [...trendingBooks, ...suggestedBooks];
+const actualdata = JSON.parse(localStorage.getItem("user") || "{}");
+
+interface Book {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  cover_image_url: string;
+  price: number;
+  cart_id: number;
+}
 
 const WishlistPage: React.FC = () => {
-  const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<Book[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const wishlistItems = books.slice(0, 5); // Example: taking first 5 books as wishlist items
+  const fetchWishlist = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/wishlist?userId=${actualdata.userId}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch wishlist items");
+      }
+      const data = await response.json();
+      console.log(data);
+      setWishlistItems(data);
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWishlist();
+  }, []);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedItems(wishlistItems.map((item) => item.id));
+      setSelectedItems(wishlistItems.map((item) => item.cart_id.toString()));
     } else {
       setSelectedItems([]);
     }
   };
 
-  const handleSelectItem = (itemId: string) => {
+  const handleSelectItem = (cart_id: number) => {
     setSelectedItems((prev) => {
-      if (prev.includes(itemId)) {
-        return prev.filter((id) => id !== itemId);
+      if (prev.includes(cart_id.toString())) {
+        return prev.filter((id) => id !== cart_id.toString());
       }
-      return [...prev, itemId];
+      return [...prev, cart_id.toString()];
     });
   };
 
+  const handleRemoveItem = async (itemId: string) => {
+    try {
+      const response = await fetch("http://localhost:5000/user/wishlist", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: actualdata.userId,
+          bookId: itemId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to remove item from wishlist");
+      }
+      setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
+      setSelectedItems((prev) => prev.filter((id) => id !== itemId));
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
+  };
+
   const subtotal = wishlistItems
-    .filter((item) => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + (item.price ?? 0), 0);
+    .filter((item) => selectedItems.includes(item.cart_id.toString()))
+    .reduce((sum, item) => sum + Number(item.price), 0);
 
   const onlineFee = 5;
   const total = subtotal + onlineFee;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#E5EADD] pt-24 flex justify-center items-center">
+        <p>Loading wishlist...</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -42,31 +104,34 @@ const WishlistPage: React.FC = () => {
       <div className="min-h-screen bg-[#E5EADD] pt-24">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold text-[#265073] mb-8">WISHLIST</h1>
-
           <div className="grid lg:grid-cols-[1fr_300px] gap-8">
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Checkbox
-                  checked={selectedItems.length === wishlistItems.length}
-                  onCheckedChange={handleSelectAll}
+                  checked={
+                    wishlistItems.length > 0 &&
+                    selectedItems.length === wishlistItems.length
+                  }
+                  onCheckedChange={(checked) =>
+                    handleSelectAll(Boolean(checked))
+                  }
                 />
                 <span className="text-sm text-gray-600">
                   Select All ({wishlistItems.length} item
                   {wishlistItems.length !== 1 ? "s" : ""})
                 </span>
               </div>
-
               {wishlistItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.cart_id}
                   className="flex gap-4 bg-white p-4 rounded-lg shadow-sm"
                 >
                   <Checkbox
-                    checked={selectedItems.includes(item.id)}
-                    onCheckedChange={() => handleSelectItem(item.id)}
+                    checked={selectedItems.includes(item.cart_id.toString())}
+                    onCheckedChange={() => handleSelectItem(item.cart_id)}
                   />
                   <img
-                    src={item.coverImage}
+                    src={item.cover_image_url}
                     alt={item.title}
                     className="w-24 h-32 object-cover rounded-md"
                   />
@@ -80,6 +145,7 @@ const WishlistPage: React.FC = () => {
                         variant="ghost"
                         size="icon"
                         className="text-red-500 hover:text-red-600"
+                        onClick={() => handleRemoveItem(item.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -87,45 +153,38 @@ const WishlistPage: React.FC = () => {
                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">
                       {item.description}
                     </p>
-                    <div className="mt-2 font-semibold">
-                      ${item.price?.toFixed(2)}
-                    </div>
+                    <div className="mt-2 font-semibold">${item.price}</div>
                   </div>
                 </div>
               ))}
             </div>
-
             <div className="bg-[#E5EADD] p-6 rounded-lg h-fit">
               <h2 className="text-xl font-semibold mb-4">Checkout Summary</h2>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>${subtotal}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Online Fee</span>
-                  <span>${onlineFee.toFixed(2)}</span>
+                  <span>${onlineFee}</span>
                 </div>
                 <div className="flex justify-between font-semibold text-base pt-3 border-t">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Payable total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${total}</span>
                 </div>
               </div>
-                <Button
+              <Button
                 className="w-full mt-6 bg-[#265073] hover:bg-[#265073]/90"
                 disabled={selectedItems.length === 0}
                 onClick={() => {
                   if (selectedItems.length > 0) {
-                  window.location.href = "/check-out";
+                    window.location.href = "/check-out";
                   }
                 }}
-                >
+              >
                 Proceed to checkout
-                </Button>
+              </Button>
             </div>
           </div>
         </div>

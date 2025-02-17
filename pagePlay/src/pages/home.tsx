@@ -20,7 +20,7 @@ const HomePage: FC = () => {
   const navigate = useNavigate();
 
   const handleBookClick = () => {
-    navigate(`/book-details`);
+    navigate(`/book-details/12/1`);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
