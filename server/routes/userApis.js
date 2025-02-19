@@ -84,7 +84,7 @@ router.get("/rating", async (req, res) => {
   }
 });
 
-//  addToCart api for user
+// addToCart API for user
 router.post("/addToCart", async (req, res) => {
   const { bookId, publisherId, userId } = req.body;
 
@@ -93,8 +93,23 @@ router.post("/addToCart", async (req, res) => {
   }
 
   try {
-    // Insert into the cart table and return the inserted row.
-    const result = await sql`
+    // Check if the book is already in the cart
+    const existingCartItem = await sql`
+      SELECT * FROM cart 
+      WHERE book_id = ${bookId} 
+        AND publisher_id = ${publisherId} 
+        AND user_id = ${userId}
+    `;
+
+    if (existingCartItem.length > 0) {
+      return res.status(200).json({
+        message: "Book already added to cart",
+        cart: existingCartItem,
+      });
+    }
+
+    // Insert into the cart table
+    const newCartItem = await sql`
       INSERT INTO cart (book_id, publisher_id, user_id)
       VALUES (${bookId}, ${publisherId}, ${userId})
       RETURNING *;
@@ -102,15 +117,16 @@ router.post("/addToCart", async (req, res) => {
 
     res.status(200).json({
       message: "Book added to cart",
-      cart: result,
+      cart: newCartItem,
     });
   } catch (error) {
     console.error("Error adding to cart:", error);
-    res
-      .status(500)
-      .json({ error: "Something went wrong while adding to cart." });
+    res.status(500).json({
+      error: "Something went wrong while adding to cart.",
+    });
   }
 });
+
 
 
 // wishlist
@@ -130,5 +146,53 @@ router.get("/wishlist", async (req, res) => {
     res.status(500).json("Something broke!");
   }
 })
+
+
+// DELETE /user/wishlist - Remove an item from the wishlist
+router.delete('/wishlist', async (req, res) => {
+  const { userId, bookId } = req.body;
+
+  // Check if required fields are present
+  if (!userId || !bookId) {
+    return res.status(400).json({ error: 'Missing required fields.' });
+  }
+
+  try {
+    // Check if the item exists in the wishlist
+    const existingItem = await sql`
+      SELECT * FROM cart 
+      WHERE user_id = ${userId} AND book_id = ${bookId}
+    `;
+
+    if (existingItem.length === 0) {
+      return res.status(404).json({ error: 'Item not found in cart.' });
+    }
+
+    // Remove the item from the cart
+    await sql`
+      DELETE FROM cart 
+      WHERE user_id = ${userId} AND book_id = ${bookId}
+    `;
+
+    res.status(200).json({ message: 'Item removed from cart successfully.' });
+  } catch (error) {
+    console.error('Error removing item from cart:', error);
+    res.status(500).json({ error: 'Something went wrong while removing the item from the cart.' });
+  }
+});
+
+// fetch post api for user
+router.get("/fetchPosts", async(req, res) => {
+  try{
+    const posts = await sql`select * from posts`;
+    res.status(200).json(posts);
+  } catch(error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+
+
 
 export default router;

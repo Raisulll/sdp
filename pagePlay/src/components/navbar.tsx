@@ -32,6 +32,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("chatHistory"); // Remove chat history
     setUser(null);
     navigate("/login");
   };
@@ -59,7 +60,7 @@ const Navbar: React.FC = () => {
             {/* User nav */}
             {window.location.pathname === "/user-profile" ||
             window.location.pathname === "/my-books" ||
-            window.location.pathname === "/wish-list" ||
+            window.location.pathname === "/cart" ||
             window.location.pathname === "/blogs" ||
             window.location.pathname === "/home" ||
             window.location.pathname === "/pdf-reader" ||
@@ -85,10 +86,10 @@ const Navbar: React.FC = () => {
                   Chatbot
                 </NavLink>
                 <NavLink
-                  to="/wish-list"
-                  isActive={location.pathname === "/wish-list"}
+                  to="/cart"
+                  isActive={location.pathname === "/cart"}
                 >
-                  Wishlist
+                  Cart
                 </NavLink>
                 <NavLink to="/blogs" isActive={location.pathname === "/blogs"}>
                   Blogs
@@ -168,13 +169,13 @@ const Navbar: React.FC = () => {
               align="end"
             >
               <div className="flex items-start gap-3 p-4 border-b border-black/10">
-                {/* <Avatar className="h-15 w-12">
+                <Avatar className="h-15 w-12">
                   <AvatarImage src={AVATAR_URL} alt="User avatar" />
                   <AvatarFallback>UN</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="font-semibold">{user?.name || "User"}</span>
-                </div> */}
+                </div>
               </div>
               <div className="p-2">
                 {userRole === "user" && (
@@ -185,7 +186,7 @@ const Navbar: React.FC = () => {
                     <MenuItem to="/my-books" icon={Book}>
                       MY BOOKS
                     </MenuItem>
-                    <MenuItem to="/wish-list" icon={Heart}>
+                    <MenuItem to="/cart" icon={Heart}>
                       WISHLIST
                     </MenuItem>
                     <MenuItem to="/blogs" icon={FileText}>

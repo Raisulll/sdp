@@ -39,7 +39,7 @@ function App() {
       <Route path="/user-profile" element={<UserProfile />} />
       <Route path="/book-details/:bookId/:publisherId" element={<BookDetails />} />
       <Route path="/my-books" element={<MyBooks />} />
-      <Route path="/wish-list" element={<WishlistPage />} />
+      <Route path="/cart" element={<WishlistPage />} />
       <Route path="/check-out" element={<CheckoutPage />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/home" element={<Home />} />
