@@ -12,17 +12,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BookOpen, Calendar, Camera, Gift, Plus, Users } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TransactionTable } from "@/components/transaction-table";
 import { transactions } from "@/data/transactions";
 
-const AVATAR_URL =
-  "https://api.dicebear.com/6.x/avataaars/svg?seed=JohnDoee&background=%23EBF4FF&radius=50&width=285&height=285";
-
 const ProfilePage: React.FC = () => {
-  const [avatarPreview, setAvatarPreview] = useState<string>(AVATAR_URL);
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
 
   const genres = [
     "Romance",
@@ -31,6 +29,32 @@ const ProfilePage: React.FC = () => {
     "Science Fiction",
     "+5 More",
   ];
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (!storedUser || !storedUser.userId) {
+          throw new Error("User ID is missing.");
+        }
+
+        const response = await fetch(
+          `http://localhost:5000/user/profileInfo?userId=${storedUser.userId}`
+        );        
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile");
+        }     
+        const data = await response.json();
+        setProfile(data);
+        setAvatarPreview(data.profile_picture);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -46,6 +70,10 @@ const ProfilePage: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#E5EADD]">
@@ -89,15 +117,15 @@ const ProfilePage: React.FC = () => {
                 <div className="space-y-3">
                   <p className="text-gray-600 flex items-center gap-3">
                     <Users className="h-4 w-4 text-[#265073]" />
-                    Male, New York, USA
+                    {profile.gender}, {profile.location}
                   </p>
                   <p className="text-gray-600 flex items-center gap-3">
                     <Gift className="h-4 w-4 text-[#265073]" />
-                    Birth Day: 01/01/1990
+                    Birth Day: {profile.birthday}
                   </p>
                   <p className="text-gray-600 flex items-center gap-3">
                     <Calendar className="h-4 w-4 text-[#265073]" />
-                    Joined: January 2020
+                    Joined: {profile.joined_date}
                   </p>
                 </div>
               </div>
@@ -108,7 +136,7 @@ const ProfilePage: React.FC = () => {
               <div className="text-center md:text-left">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-3xl font-bold text-[#265073]">
-                    John Doe
+                    {profile.firstName} {profile.lastName}
                   </h2>
                   <Dialog
                     open={isEditDialogOpen}
@@ -138,7 +166,7 @@ const ProfilePage: React.FC = () => {
                           </Label>
                           <Input
                             id="name"
-                            defaultValue="John Doe"
+                            defaultValue={`${profile.firstName} ${profile.lastName}`}
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>
@@ -151,7 +179,7 @@ const ProfilePage: React.FC = () => {
                           </Label>
                           <Input
                             id="location"
-                            defaultValue="New York, USA"
+                            defaultValue={profile.location}
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>
@@ -165,7 +193,7 @@ const ProfilePage: React.FC = () => {
                           <Input
                             id="birthday"
                             type="date"
-                            defaultValue="1990-01-01"
+                            defaultValue={profile.birthday}
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>
@@ -178,7 +206,7 @@ const ProfilePage: React.FC = () => {
                           </Label>
                           <Input
                             id="gender"
-                            defaultValue="Male"
+                            defaultValue={profile.gender}
                             className="border-[#265073] focus-visible:ring-[#265073]"
                           />
                         </div>

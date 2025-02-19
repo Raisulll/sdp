@@ -3,6 +3,52 @@ import sql from "../db.js";
 
 const router = express.Router();
 
+
+// View profile info API for user
+router.get("/profileInfo", async (req, res) => {
+  const { userId } = req.query;
+
+  console.log("User ID:", userId);
+
+  if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+      // Fetch user profile by joining 'users' and 'all_users' tables
+      const query = `
+          SELECT 
+              u.user_id, 
+              u.all_user_id, 
+              u.full_name, 
+              u.phone_number, 
+              u.profile_picture, 
+              u.created_at, 
+              a.email, 
+              a.role 
+          FROM users u
+          JOIN all_users a ON u.all_user_id = a.all_user_id
+          WHERE u.all_user_id = ${userId}
+      `;
+      
+      const profileInfo = await sql.query(query);
+
+      console.log("Profile info:", profileInfo.rows);
+
+      if (profileInfo.rows.length === 0) {
+          return res.status(404).json({ error: "User profile not found" });
+      }
+
+      res.status(200).json(profileInfo.rows[0]); // Return the user profile
+  } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+
+
+
 // view pdf api for user
 router.get("/pdfUrl", async (req, res) => {
   // console.log("User view pdf api");
