@@ -43,6 +43,7 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
       publisherId: book[0].publisher_id,
       userId: localdata.userId,
     };
+    console.log(data);
     fetch("http://localhost:5000/user/addReview", {
       method: "POST",
       headers: {

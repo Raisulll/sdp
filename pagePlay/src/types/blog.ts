@@ -24,6 +24,8 @@ export interface Post {
 }
 
 export interface SocialLinks {
+  linkedin: string | undefined;
+  twitter: string | undefined;
   facebook?: string;
   instagram?: string;
   github?: string;
