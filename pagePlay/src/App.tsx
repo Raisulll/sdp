@@ -24,6 +24,9 @@ import MyBooks from "./user/my-books";
 import PDFReader from "./user/pdf-reader";
 import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
+import AddAdmin from "./admin/AddAdmin";
+import AddPublisher from "./admin/AddPublisher";
+
 
 function App() {
   return (
@@ -57,12 +60,16 @@ function App() {
       />
 
       {/* admin */}
+      
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/admin/users" element={<UsersList />} />
       <Route path="/admin/publishers" element={<PublishersList />} />
       <Route path="/admin/transactions" element={<Transactions />} />
       <Route path="/admin/reports" element={<Reports />} />
       <Route path="/admin/pending-books" element={<PendingBooks />} />
+      <Route path="/admin/Add-Admin" element={<AddAdmin />} />
+      <Route path="/admin/Add-Publishers" element={<AddPublisher />} />
+      
     </Routes>
   );
 }
