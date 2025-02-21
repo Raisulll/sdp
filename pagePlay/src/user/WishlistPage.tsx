@@ -43,7 +43,7 @@ const WishlistPage: React.FC = () => {
 
   useEffect(() => {
     fetchWishlist();
-  }, []); // Removed actualdata.userId as a dependency
+  }, []);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -84,11 +84,13 @@ const WishlistPage: React.FC = () => {
     }
   };
 
+  // Compute subtotal from selected items
   const subtotal = wishlistItems
     .filter((item) => selectedItems.includes(item.cart_id.toString()))
     .reduce((sum, item) => sum + Number(item.price), 0);
 
-  const onlineFee = 5;
+  // Only apply online fee if at least one item is selected
+  const onlineFee = selectedItems.length > 0 ? 5 : 0;
   const total = subtotal + onlineFee;
 
   // Skeleton Loader
@@ -175,10 +177,12 @@ const WishlistPage: React.FC = () => {
                     <span>Subtotal</span>
                     <span>${subtotal}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Online Fee</span>
-                    <span>${onlineFee}</span>
-                  </div>
+                  {selectedItems.length > 0 && (
+                    <div className="flex justify-between">
+                      <span>Online Fee</span>
+                      <span>${onlineFee}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-semibold text-base pt-3 border-t">
                     <span>Total</span>
                     <span>${total}</span>

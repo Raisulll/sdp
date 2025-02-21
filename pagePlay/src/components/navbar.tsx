@@ -63,55 +63,55 @@ const Navbar: React.FC = () => {
             window.location.pathname === "/cart" ||
             window.location.pathname === "/blogs" ||
             window.location.pathname === "/home" ||
-            window.location.pathname === "/pdf-reader" ||
-            window.location.pathname === "/book-details" ||
+            window.location.pathname.includes("/pdf-reader") ||
+            window.location.pathname.includes("/book-details") ||
             window.location.pathname === "/contact" ||
             window.location.pathname === "/check-out" ||
             window.location.pathname === "/chat-bot" ||
             window.location.pathname === "/favourite-books" ? (
               <>
-                <NavLink to="/home" isActive={location.pathname === "/home"}>
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/my-books"
-                  isActive={location.pathname === "/my-books"}
-                >
-                  My Books
-                </NavLink>
-                <NavLink
-                  to="/chat-bot"
-                  isActive={location.pathname === "/chat-bot"}
-                >
-                  Chatbot
-                </NavLink>
-                <NavLink
-                  to="/cart"
-                  isActive={location.pathname === "/cart"}
-                >
-                  Cart
-                </NavLink>
-                <NavLink to="/blogs" isActive={location.pathname === "/blogs"}>
-                  Blogs
-                </NavLink>
-                <NavLink
-                  to="/favourite-books"
-                  isActive={location.pathname === "/favourite-books"}
-                >
-                  Favourite Books
-                </NavLink>
-                <NavLink
-                  to="/contact"
-                  isActive={location.pathname === "/contact"}
-                >
-                  Contact us
-                </NavLink>
-                <NavLink
-                  to="/user-profile"
-                  isActive={location.pathname === "/user-profile"}
-                >
-                  Profile
-                </NavLink>
+              <NavLink to="/home" isActive={location.pathname === "/home"}>
+                Home
+              </NavLink>
+              <NavLink
+                to="/my-books"
+                isActive={location.pathname === "/my-books"}
+              >
+                My Books
+              </NavLink>
+              <NavLink
+                to="/chat-bot"
+                isActive={location.pathname === "/chat-bot"}
+              >
+                Chatbot
+              </NavLink>
+              <NavLink
+                to="/cart"
+                isActive={location.pathname === "/cart"}
+              >
+                Cart
+              </NavLink>
+              <NavLink to="/blogs" isActive={location.pathname === "/blogs"}>
+                Blogs
+              </NavLink>
+              <NavLink
+                to="/favourite-books"
+                isActive={location.pathname === "/favourite-books"}
+              >
+                Favourite Books
+              </NavLink>
+              <NavLink
+                to="/contact"
+                isActive={location.pathname === "/contact"}
+              >
+                Contact us
+              </NavLink>
+              <NavLink
+                to="/user-profile"
+                isActive={location.pathname === "/user-profile"}
+              >
+                Profile
+              </NavLink>
               </>
             ) : null}
 
@@ -168,15 +168,6 @@ const Navbar: React.FC = () => {
               className="w-64 mt-2 p-0 bg-[#E5EADD] border-none"
               align="end"
             >
-              <div className="flex items-start gap-3 p-4 border-b border-black/10">
-                <Avatar className="h-15 w-12">
-                  <AvatarImage src={AVATAR_URL} alt="User avatar" />
-                  <AvatarFallback>UN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-semibold">{user?.name || "User"}</span>
-                </div>
-              </div>
               <div className="p-2">
                 {userRole === "user" && (
                   <>
@@ -187,7 +178,7 @@ const Navbar: React.FC = () => {
                       MY BOOKS
                     </MenuItem>
                     <MenuItem to="/cart" icon={Heart}>
-                      WISHLIST
+                      Cart
                     </MenuItem>
                     <MenuItem to="/blogs" icon={FileText}>
                       BLOGS
