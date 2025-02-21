@@ -1,5 +1,5 @@
-export interface User {
-  id: string;
+export interface Author {
+  id: number;
   name: string;
   avatar: string;
 }
@@ -7,16 +7,17 @@ export interface User {
 export interface Comment {
   id: string;
   content: string;
-  author: User;
+  author: Author;
   likes: number;
+  parentId?: string; // Tracks replies
+  replies?: Comment[]; // Allows nested comments
   timestamp: string;
-  replies?: Comment[];
 }
 
 export interface Post {
   id: string;
   content: string;
-  author: User;
+  author: Author; 
   image?: string;
   likes: number;
   comments: Comment[];
