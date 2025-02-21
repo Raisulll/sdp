@@ -60,11 +60,8 @@ router.post("/updateProfile", async (req, res) => {
     // Update User Profile
     const result = await sql`
       UPDATE users 
-      SET firstname = ${firstname}, 
-          lastname = ${lastnameStr}, 
-          address = ${location}, 
-          date_of_birth = ${birthday}, 
-          updated_at = NOW()
+      SET firstname = ${firstname}, lastname = ${lastnameStr}, address = ${location}, date_of_birth = ${birthday}, 
+      updated_at = NOW()
       WHERE id = ${userId}
       RETURNING *;  -- Return the updated user data
     `;

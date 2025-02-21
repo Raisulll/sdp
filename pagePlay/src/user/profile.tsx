@@ -253,7 +253,7 @@ const ProfilePage: React.FC = () => {
                 <div className="space-y-3">
                   <p className="text-gray-600 flex items-center gap-3">
                     <Users className="h-4 w-4 text-[#265073]" />
-                    {profile.gender}, {profile.address}
+                    {profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1)}, {profile.address}
                   </p>
                   <p className="text-gray-600 flex items-center gap-3">
                     <Gift className="h-4 w-4 text-[#265073]" />

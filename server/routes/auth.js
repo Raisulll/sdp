@@ -59,7 +59,7 @@ router.post("/login", async (req, res) => {
       } else {
         return res.status(400).json("Password is incorrect");
       }
-    } else if (user[0].role === "admin") {
+    } else if (user[0].role === "admin" || user[0].role === "superadmin") {
       const admin = await sql`select * from admin where email = ${email}`;
       if (admin[0].password === password) {
         return res.status(200).json({role: "admin", adminId: admin[0].id, image: admin[0].image});

@@ -55,7 +55,7 @@ export default function Login() {
         navigate("/user-profile");
       } else if (data.role === "publisher") {
         navigate("/publisher-profile");
-      } else if (data.role === "admin") {
+      } else if (data.role === "admin"  || data.role === "superadmin") {
         navigate("/admin");
       } else {
         throw new Error("Invalid role");
