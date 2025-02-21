@@ -22,7 +22,11 @@ export function CommentItem({ comment, onLike, onReply }: CommentItemProps) {
   return (
     <div className="flex gap-2 group">
       <Avatar className="h-8 w-8 shrink-0">
-        <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+        <AvatarImage
+          src={comment.author.avatar}
+          alt={comment.author.name}
+          className="object-cover"
+        />
         <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex-1">

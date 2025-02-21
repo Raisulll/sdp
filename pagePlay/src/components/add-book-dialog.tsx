@@ -256,7 +256,7 @@ export function AddBookDialog({ onClose }: AddBookDialogProps) {
             <Input
               placeholder="Enter Price"
               className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
-              value={isbn}
+              value={price}
               onChange={(e) => setPrice(e.target.value)}
               required
             />

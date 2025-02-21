@@ -158,8 +158,8 @@ const Navbar: React.FC = () => {
                 variant="ghost"
                 className="relative h-12 w-12 rounded-full p-0 hover:bg-transparent"
               >
-                <Avatar className="h-11 w-11 border-2 border-[#265073] transition-transform hover:scale-105">
-                  <AvatarImage src={AVATAR_URL} alt="User avatar" />
+                <Avatar className="h-11 w-11 border-2 border-[#265073] transition-transform hover:scale-105 rounded-full overflow-hidden">
+                  <AvatarImage src={AVATAR_URL} alt="User avatar" className="object-cover" />
                   <AvatarFallback>UN</AvatarFallback>
                 </Avatar>
               </Button>

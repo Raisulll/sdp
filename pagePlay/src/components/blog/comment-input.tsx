@@ -43,7 +43,11 @@ export function CommentInput({ user, onSubmit }: CommentInputProps) {
   return (
     <div className="flex items-start gap-2">
       <Avatar className="h-8 w-8 shrink-0">
-        <AvatarImage src={user.avatar} alt={user.name} />
+        <AvatarImage
+          src={user.avatar}
+          alt={user.name}
+          className="object-cover"
+        />
         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex-1 flex items-end gap-2 min-h-[36px] rounded-full bg-gray-100 px-3 py-1">

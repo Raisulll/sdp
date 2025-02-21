@@ -90,7 +90,7 @@ export function CreatePost({ user, onCreatePost }: CreatePostProps) {
       <div className="space-y-4">
         <div className="flex gap-2">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={user.avatar} alt={user.name} />
+            <AvatarImage src={user.avatar} alt={user.name}  className="object-cover"/>
             <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
           </Avatar>
           <button
