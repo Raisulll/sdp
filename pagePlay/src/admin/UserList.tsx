@@ -22,6 +22,7 @@ const UsersList = () => {
         if (error) throw error;
         setUsers(data || []);
       } catch (err: any) {
+        console.error("Error fetching users:", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -32,22 +33,45 @@ const UsersList = () => {
   }, []);
 
   const handleDeleteUser = async (id: number, email: string) => {
-    if (!window.confirm("Are you sure you want to delete this admin?")) return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+  
     try {
+      setError(null);
+  
+      // Step 1: Delete related transactions first
+      const { error: deleteTransactionsError } = await supabase
+        .from("transactions")
+        .delete()
+        .eq("user_id", id);
+  
+      if (deleteTransactionsError) {
+        throw new Error(`Error deleting transactions: ${deleteTransactionsError.message}`);
+      }
+  
+      // Step 2: Delete from alluser table
+      const { error: deleteUserError } = await supabase
+        .from("alluser")
+        .delete()
+        .eq("email", email);
+  
+      if (deleteUserError) {
+        throw new Error(`Error removing user from alluser table: ${deleteUserError.message}`);
+      }
+  
+      // Step 3: Delete the user from users table
       const { error } = await supabase.from("users").delete().eq("id", id);
-      if (error) throw new Error("Error deleting user");
-
-      const { error: deleteUserError } = await supabase.from("alluser").delete().eq("email", email);
-      if (deleteUserError) throw new Error("Error removing admin from alluser table");
-
-      // ✅ Corrected variable reference in filter
-      const updateduser = users.filter((user) => user.id !== id);
-      setUsers(updateduser);
+      if (error) {
+        throw new Error(`Error deleting user: ${error.message}`);
+      }
+  
+      // Update the state after deletion
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
     } catch (error: any) {
-      console.error("Error deleting user:", error);
-      setError("Failed to delete user.");
+      console.error("Error deleting user:", error.message);
+      setError(error.message);
     }
   };
+  
 
   return (
     <div className="flex">
@@ -84,7 +108,6 @@ const UsersList = () => {
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">{user.phone_number}</td>
                   <td className="px-4 py-2 text-center">
-                    {/* ✅ Corrected variable reference */}
                     <Button onClick={() => handleDeleteUser(user.id, user.email)} variant="destructive">
                       Delete
                     </Button>
