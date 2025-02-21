@@ -145,6 +145,7 @@ export default function BlogFeed() {
 
   // Create a new parent comment
   const handleComment = async (postId: string, content: string) => {
+    console.log("New comment:", postId, content);
     try {
       const response = await fetch(`http://localhost:5000/user/addNewComment`, {
         method: "POST",
