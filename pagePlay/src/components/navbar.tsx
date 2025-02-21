@@ -168,15 +168,6 @@ const Navbar: React.FC = () => {
               className="w-64 mt-2 p-0 bg-[#E5EADD] border-none"
               align="end"
             >
-              <div className="flex items-start gap-3 p-4 border-b border-black/10">
-                <Avatar className="h-15 w-12">
-                  <AvatarImage src={AVATAR_URL} alt="User avatar" />
-                  <AvatarFallback>UN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-semibold">{user?.name || "User"}</span>
-                </div>
-              </div>
               <div className="p-2">
                 {userRole === "user" && (
                   <>
@@ -187,7 +178,7 @@ const Navbar: React.FC = () => {
                       MY BOOKS
                     </MenuItem>
                     <MenuItem to="/cart" icon={Heart}>
-                      WISHLIST
+                      Cart
                     </MenuItem>
                     <MenuItem to="/blogs" icon={FileText}>
                       BLOGS

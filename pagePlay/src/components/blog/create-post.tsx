@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageIcon, X } from "lucide-react";
+import supabase from "../../../Auth/SupabaseClient";
+import { toast } from "react-toastify";
 import { useState, useRef } from "react";
 
 interface CreatePostProps {
   user: {
-    name: string;
+    id: number;
     avatar: string;
   };
   onCreatePost: (content: string, image?: string) => void;
@@ -17,6 +19,48 @@ export function CreatePost({ user, onCreatePost }: CreatePostProps) {
   const [content, setContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  console.log(user);
+  const fileUpload = async (file: File) => {
+    const fileName = `${Date.now()}-${file.name}`;
+    fileName.replace(/\s+/g, "-").toLowerCase();
+    console.log("file: ", fileName);
+
+    const { data, error } = await supabase.storage
+      .from("books")
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload file.");
+      return null;
+    }
+    console.log(data);
+    const { data: publicUrlData } = supabase.storage
+      .from("books")
+      .getPublicUrl(fileName);
+    const publicUrl = publicUrlData.publicUrl;
+    console.log("Public URL:", publicUrl);
+    return publicUrl;
+  };
+
+  const handleSubmit = async () => {
+    if (content.trim() || selectedImage) {
+      let imageUrl;
+      if (selectedImage) {
+        const file = fileInputRef.current?.files?.[0];
+        if (file) {
+          imageUrl = await fileUpload(file);
+        }
+      }
+      onCreatePost(content, imageUrl || undefined);
+      setContent("");
+      setSelectedImage(null);
+    }
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -29,20 +73,11 @@ export function CreatePost({ user, onCreatePost }: CreatePostProps) {
     }
   };
 
-  const handleSubmit = () => {
-    if (content.trim() || selectedImage) {
-      onCreatePost(content, selectedImage || undefined);
-      setContent("");
-      setSelectedImage(null);
-    }
-  };
-
   return (
     <Card className="p-4 mb-6 bg-white shadow-md">
       <div className="flex gap-3">
         <Avatar>
           <AvatarImage src={user.avatar} />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex-1 space-y-4">
           <Textarea

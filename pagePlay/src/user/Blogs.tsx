@@ -1,129 +1,162 @@
+// BlogFeed.tsx
 import { CreatePost } from "@/components/blog/create-post";
 import { PostCard } from "@/components/blog/post-card";
 import Navbar from "@/components/navbar";
 import type { Post } from "@/types/blog";
 import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:5000";
-
 export default function BlogFeed() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any[]>([]);
 
-  const currentUser = {
-    id: "current-user",
-    name: "Current User",
-    avatar: "https://api.dicebear.com/6.x/avataaars/svg?seed=currentUser",
-  };
+  // Get user info from localStorage
+  const localdata = localStorage.getItem("user");
+  const user1 = JSON.parse(localdata || "{}");
 
+  // Fetch user details
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchUser = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_URL}/user/fetchPosts`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
-        }
+        const response = await fetch(
+          `http://localhost:5000/user/profileInfo?userId=${user1.userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch user");
         const data = await response.json();
-        setPosts(data);
+        setUser(data);
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching user:", error);
       } finally {
         setLoading(false);
       }
     };
+    fetchUser();
+  }, [user1.userId]);
 
+  // Fetch posts after user data is available and load their previous comments
+  useEffect(() => {
+    if (!user || user.length === 0) return;
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/user/fetchPosts`);
+        if (!response.ok) throw new Error("Failed to fetch posts");
+        const postsData = await response.json();
+        // For each post, fetch its previous comments
+        const postsWithComments = await Promise.all(
+          postsData.map(async (post: any) => {
+            try {
+              const commentResponse = await fetch(
+                `http://localhost:5000/user/fetchComments?postId=${post.id}`
+              );
+              if (!commentResponse.ok) {
+                throw new Error("Failed to fetch comments");
+              }
+              const commentsData = await commentResponse.json();
+              console.log(commentsData);
+              return {
+                ...post,
+                author: user[0],
+                comments: commentsData || [],
+              };
+            } catch (error) {
+              console.error(
+                "Error fetching comments for post:",
+                post.id,
+                error
+              );
+              return {
+                ...post,
+                author: user[0],
+                comments: [],
+              };
+            }
+          })
+        );
+        setPosts(postsWithComments);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
     fetchPosts();
-  }, []);
+  }, [user]);
 
+  // Skeleton Loader for when user data isn’t ready
+  const SkeletonLoader = () => (
+    <div className="min-h-screen bg-[#F5F0E8] pt-24 flex justify-center items-center">
+      <div className="animate-pulse space-y-4">
+        <div className="w-64 h-8 bg-gray-300 rounded"></div>
+        <div className="w-96 h-4 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+  );
+
+  if (!user || user.length === 0) return <SkeletonLoader />;
+
+  const currentUser = {
+    id: user[0].id,
+    name: user[0].firstname + " " + user[0].lastname,
+    avatar: user[0].image,
+  };
+
+  // Create a new post (existing functionality)
   const handleCreatePost = async (content: string, image?: string) => {
     try {
-      const response = await fetch(`${API_URL}/AddPosts`, {
+      const response = await fetch(`http://localhost:5000/user/AddPosts`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content, author: currentUser, image }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, author: user[0].id, image }),
       });
-      if (!response.ok) {
-        throw new Error("Failed to create post");
-      }
+      if (!response.ok) throw new Error("Failed to create post");
       const newPost = await response.json();
-      setPosts((prevPosts) => [newPost, ...prevPosts]);
+      const newPostWithAuthor = {
+        ...newPost,
+        author: currentUser,
+        comments: [],
+      }; // Ensure comments is an array
+      setPosts((prevPosts) => [newPostWithAuthor, ...prevPosts]);
     } catch (error) {
       console.error("Error creating post:", error);
     }
   };
 
-  const handleLikePost = async (postId: string) => {
-    try {
-      const response = await fetch(`${API_URL}/posts/${postId}/like`, {
-        method: "POST",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to like post");
-      }
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === postId ? { ...post, likes: post.likes + 1 } : post
-        )
-      );
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
-  };
-
+  // Create a new parent comment
   const handleComment = async (postId: string, content: string) => {
     try {
-      const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+      const response = await fetch(`http://localhost:5000/user/addNewComment`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content, author: currentUser }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId, content, author: currentUser }),
       });
-      if (!response.ok) {
-        throw new Error("Failed to add comment");
-      }
+      if (!response.ok) throw new Error("Failed to create comment");
       const newComment = await response.json();
+      const formattedComment = {
+        id: newComment.id,
+        content: newComment.content,
+        likes: newComment.likes,
+        timestamp: newComment.timestamp,
+        author: newComment.author,
+        replies: newComment.replies || [],
+      };
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.id === postId
-            ? { ...post, comments: [...post.comments, newComment] }
+            ? { ...post, comments: [...post.comments, formattedComment] }
             : post
         )
       );
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error("Error creating comment:", error);
     }
   };
 
-  const handleLikeComment = async (postId: string, commentId: string) => {
-    try {
-      const response = await fetch(
-        `${API_URL}/posts/${postId}/comments/${commentId}/like`,
-        {
-          method: "POST",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to like comment");
-      }
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => ({
-          ...post,
-          comments: post.comments.map((comment) =>
-            comment.id === commentId
-              ? { ...comment, likes: comment.likes + 1 }
-              : comment
-          ),
-        }))
-      );
-    } catch (error) {
-      console.error("Error liking comment:", error);
-    }
-  };
-
+  // Reply to a comment
   const handleReplyComment = async (
     postId: string,
     commentId: string,
@@ -131,37 +164,69 @@ export default function BlogFeed() {
   ) => {
     try {
       const response = await fetch(
-        `${API_URL}/posts/${postId}/comments/${commentId}/replies`,
+        `http://localhost:5000/user/${postId}/comments/${commentId}/replies`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content, author: currentUser }),
         }
       );
-      if (!response.ok) {
-        throw new Error("Failed to reply to comment");
-      }
+      if (!response.ok) throw new Error("Failed to reply to comment");
       const newReply = await response.json();
       setPosts((prevPosts) =>
-        prevPosts.map((post) => ({
-          ...post,
-          comments: post.comments.map((comment) =>
-            comment.id === commentId
-              ? { ...comment, replies: [...(comment.replies || []), newReply] }
-              : comment
-          ),
-        }))
+        prevPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment.id === commentId
+                    ? {
+                        ...comment,
+                        replies: comment.replies
+                          ? [...comment.replies, newReply]
+                          : [newReply],
+                      }
+                    : comment
+                ),
+              }
+            : post
+        )
       );
     } catch (error) {
       console.error("Error replying to comment:", error);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Like a comment
+  const handleLikeComment = async (postId: string, commentId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/${postId}/comments/${commentId}/like`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (!response.ok) throw new Error("Failed to like comment");
+      const data = await response.json();
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment.id === commentId
+                    ? { ...comment, likes: data.likes }
+                    : comment
+                ),
+              }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error("Error liking comment:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FEFFF0]">
@@ -174,7 +239,9 @@ export default function BlogFeed() {
               key={post.id}
               post={post}
               currentUser={currentUser}
-              onLike={handleLikePost}
+              onLike={(postId: string) => {
+                // ... existing post-like functionality
+              }}
               onComment={handleComment}
               onLikeComment={(commentId: string) =>
                 handleLikeComment(post.id, commentId)

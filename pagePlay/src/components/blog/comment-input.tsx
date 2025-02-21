@@ -6,6 +6,7 @@ import { useState } from "react";
 
 interface CommentInputProps {
   user: {
+    id: number;
     name: string;
     avatar: string;
   };
