@@ -3,6 +3,92 @@ import sql from "../db.js";
 
 const router = express.Router();
 
+
+// View profile info API for user
+router.get("/profileInfo", async (req, res) => {
+  const { userId } = req.query;
+
+  console.log("User ID:", userId);
+
+  if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+      // Fetch user profile by joining 'users' and 'all_users' tables
+      const profileInfo = await sql` SELECT * FROM users WHERE id = ${userId} `;
+
+      console.log("Profile info:", profileInfo);
+
+      res.status(200).json(profileInfo); // Return the user profile
+  } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+
+router.post("/updateProfileImage", async (req, res) => {
+  const { userId, image } = req.body; // Extract userId & image from request body
+  console.log("Received:", userId, image);
+
+  try {
+    // Use double quotes around "user_id" to avoid case-sensitivity issues
+    await sql`
+      UPDATE users SET image = ${image} WHERE "id" = ${userId}
+    `;
+    res.status(200).json({ message: "Profile image updated successfully!" });
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+
+router.post("/updateProfile", async (req, res) => {
+  const { userId, fullName, location, birthday } = req.body;
+
+  console.log("Updating profile for user ID:", userId);
+
+  // Validate Input
+  if (!userId || !fullName || !location || !birthday ) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+
+  try {
+    // Split first name and last name safely
+    const [firstname, ...lastname] = fullName.trim().split(/\s+/); // Splits by spaces, removes extra spaces
+    const lastnameStr = lastname.length > 0 ? lastname.join(" ") : ""; // Ensures last name isn't 'undefined'
+
+    // Update User Profile
+    const result = await sql`
+      UPDATE users 
+      SET firstname = ${firstname}, 
+          lastname = ${lastnameStr}, 
+          address = ${location}, 
+          date_of_birth = ${birthday}, 
+          updated_at = NOW()
+      WHERE id = ${userId}
+      RETURNING *;  -- Return the updated user data
+    `;
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    console.log("Profile updated successfully:", result[0]);
+    res.status(200).json({ message: "Profile updated successfully!", user: result[0] });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ error: "Something went wrong!", details: error.message });
+  }
+});
+
+
+
+
+
 // view pdf api for user
 router.get("/pdfUrl", async (req, res) => {
   // console.log("User view pdf api");
