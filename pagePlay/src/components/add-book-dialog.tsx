@@ -23,9 +23,23 @@ import {
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../Auth/SupabaseClient";
+
+// Import PDF.js worker settings
+import { GlobalWorkerOptions } from "pdfjs-dist";
+import pdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import * as pdfjsLib from "pdfjs-dist";
 
-export function AddBookDialog() {
+// Import react-toastify
+import { toast } from "react-toastify";
+
+// Set the worker source for PDF.js
+GlobalWorkerOptions.workerSrc = pdfWorker;
+
+interface AddBookDialogProps {
+  onClose: () => void;
+}
+
+export function AddBookDialog({ onClose }: AddBookDialogProps) {
   // Define available genres
   const genres = [
     "Fiction",
@@ -57,8 +71,7 @@ export function AddBookDialog() {
   const navigate = useNavigate();
 
   const fileUpload = async (file: File) => {
-    const fileName = `${Date.now()}-${file.name}`; 
-
+    const fileName = `${Date.now()}-${file.name}`;
     fileName.replace(/\s+/g, "-").toLowerCase();
     console.log("file: ", fileName);
 
@@ -71,8 +84,8 @@ export function AddBookDialog() {
 
     if (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload image.");
-      return;
+      toast.error("Failed to upload file.");
+      return null;
     }
     console.log(data);
     const { data: publicUrlData } = supabase.storage
@@ -81,7 +94,7 @@ export function AddBookDialog() {
     const publicUrl = publicUrlData.publicUrl;
     console.log("Public URL:", publicUrl);
     return publicUrl;
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +107,6 @@ export function AddBookDialog() {
     formData.append("isbn", isbn);
     formData.append("genre", genre);
     formData.append("description", description);
-    // Replace with the actual publisher ID if available (here we use a dummy value)
     formData.append("publisherId", publisherId);
     if (coverFile) {
       formData.append("coverFile", coverFile);
@@ -112,7 +124,7 @@ export function AddBookDialog() {
       pages = pdf.numPages;
     }
 
-    const data ={
+    const data = {
       authorName: authorName,
       bookTitle: bookTitle,
       publicationDate: publicationDate,
@@ -123,10 +135,11 @@ export function AddBookDialog() {
       coverUrl: coverUrl,
       pdfUrl: pdfUrl,
       pages: pages,
-    }
+    };
     console.log("Data: ", data);
 
     console.log("Form Data ready to submit");
+
     try {
       const result = await fetch("http://localhost:5000/publisher/addBook", {
         method: "POST",
@@ -139,7 +152,16 @@ export function AddBookDialog() {
       const responseData = await result.json();
       console.log("Response:", responseData);
 
-      // Optionally, clear form fields or navigate on success
+      if (result.ok) {
+        toast.success("Book added successfully!");
+      } else {
+        toast.error("Error uploading book. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Error uploading book. Please try again.");
+    } finally {
+      // Clear form fields
       setAuthorName("");
       setBookTitle("");
       setPublicationDate("");
@@ -148,206 +170,204 @@ export function AddBookDialog() {
       setDescription("");
       setCoverFile(null);
       setPdfFile(null);
-      navigate("/publisher-profile");
-    } catch (error) {
-      console.error("Error submitting form:", error);
+      // Close the dialog regardless of outcome
+      onClose();
     }
   };
 
   return (
-      <DialogContent className="max-w-4xl bg-[#FAF7ED] max-h-[80vh] overflow-y-auto p-4 custom-scrollbar">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#265073] text-center">
-            Add Book
-          </DialogTitle>
-        </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_250px] gap-6 py-4">
-          {/* Left Column - Form Fields */}
-          <div className="space-y-6">
-            {/* Author Name */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Author Name
-              </label>
-              <Input
-                placeholder="Enter author name"
-                className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
-                value={authorName}
-                onChange={(e) => setAuthorName(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* Book Title */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <Book className="h-4 w-4" />
-                Book Title
-              </label>
-              <Input
-                placeholder="Enter book title"
-                className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
-                value={bookTitle}
-                onChange={(e) => setBookTitle(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* Publication Date */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Publication Date
-              </label>
-              <Input
-                type="date"
-                className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
-                value={publicationDate}
-                onChange={(e) => setPublicationDate(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* ISBN */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <Bookmark className="h-4 w-4" />
-                ISBN
-              </label>
-              <Input
-                placeholder="Enter ISBN"
-                className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
-                value={isbn}
-                onChange={(e) => setIsbn(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* Genre */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Genre
-              </label>
-              <Select onValueChange={(value) => setGenre(value)} required>
-                <SelectTrigger className="mt-2 border-[#265073] focus:ring-[#265073]">
-                  <SelectValue placeholder="Select genre" />
-                </SelectTrigger>
-                <SelectContent>
-                  {genres.map((genreOption) => (
-                    <SelectItem
-                      key={genreOption}
-                      value={genreOption.toLowerCase()}
-                    >
-                      {genreOption}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Description */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Description
-              </label>
-              <Input
-                placeholder="Enter book description"
-                className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
+    <DialogContent className="max-w-4xl bg-[#FAF7ED] max-h-[80vh] overflow-y-auto p-4 custom-scrollbar">
+      <DialogHeader>
+        <DialogTitle className="text-2xl font-bold text-[#265073] text-center">
+          Add Book
+        </DialogTitle>
+      </DialogHeader>
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_250px] gap-6 py-4">
+        {/* Left Column - Form Fields */}
+        <div className="space-y-6">
+          {/* Author Name */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Author Name
+            </label>
+            <Input
+              placeholder="Enter author name"
+              className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
+              value={authorName}
+              onChange={(e) => setAuthorName(e.target.value)}
+              required
+            />
           </div>
 
-          {/* Right Column - Cover Upload & PDF Upload */}
-          <div className="space-y-4">
-            {/* Cover Upload */}
-            <div
-              className="aspect-[2/3] border-2 border-dashed border-[#265073] rounded-lg flex flex-col items-center justify-center p-4 hover:bg-[#265073]/5 transition-colors cursor-pointer"
-              onClick={() =>
-                coverInputRef.current && coverInputRef.current.click()
-              }
-            >
-              {coverFile ? (
-                <img
-                  src={URL.createObjectURL(coverFile)}
-                  alt="Cover Preview"
-                  className="object-cover w-full h-full rounded-lg"
-                />
-              ) : (
-                <div className="text-center space-y-2">
-                  <Book className="h-12 w-12 text-[#265073] mx-auto" />
-                  <div className="text-sm text-[#265073]">
-                    <p className="font-medium">Click to upload cover</p>
-                    <p className="text-xs">or drag and drop</p>
-                    <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
-                  </div>
+          {/* Book Title */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <Book className="h-4 w-4" />
+              Book Title
+            </label>
+            <Input
+              placeholder="Enter book title"
+              className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
+              value={bookTitle}
+              onChange={(e) => setBookTitle(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Publication Date */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Publication Date
+            </label>
+            <Input
+              type="date"
+              className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
+              value={publicationDate}
+              onChange={(e) => setPublicationDate(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* ISBN */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <Bookmark className="h-4 w-4" />
+              ISBN
+            </label>
+            <Input
+              placeholder="Enter ISBN"
+              className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
+              value={isbn}
+              onChange={(e) => setIsbn(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Genre */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              Genre
+            </label>
+            <Select onValueChange={(value) => setGenre(value)} required>
+              <SelectTrigger className="mt-2 border-[#265073] focus:ring-[#265073]">
+                <SelectValue placeholder="Select genre" />
+              </SelectTrigger>
+              <SelectContent>
+                {genres.map((genreOption) => (
+                  <SelectItem
+                    key={genreOption}
+                    value={genreOption.toLowerCase()}
+                  >
+                    {genreOption}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Description */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Description
+            </label>
+            <Input
+              placeholder="Enter book description"
+              className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        {/* Right Column - Cover Upload & PDF Upload */}
+        <div className="space-y-4">
+          {/* Cover Upload */}
+          <div
+            className="aspect-[2/3] border-2 border-dashed border-[#265073] rounded-lg flex flex-col items-center justify-center p-4 hover:bg-[#265073]/5 transition-colors cursor-pointer"
+            onClick={() =>
+              coverInputRef.current && coverInputRef.current.click()
+            }
+          >
+            {coverFile ? (
+              <img
+                src={URL.createObjectURL(coverFile)}
+                alt="Cover Preview"
+                className="object-cover w-full h-full rounded-lg"
+              />
+            ) : (
+              <div className="text-center space-y-2">
+                <Book className="h-12 w-12 text-[#265073] mx-auto" />
+                <div className="text-sm text-[#265073]">
+                  <p className="font-medium">Click to upload cover</p>
+                  <p className="text-xs">or drag and drop</p>
+                  <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
                 </div>
-              )}
-              <input
-                type="file"
-                accept="image/png, image/jpeg"
-                className="hidden"
-                ref={coverInputRef}
-                onChange={(e) =>
-                  setCoverFile(e.target.files ? e.target.files[0] : null)
-                }
-                required
-              />
-            </div>
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              className="hidden"
+              ref={coverInputRef}
+              onChange={(e) =>
+                setCoverFile(e.target.files ? e.target.files[0] : null)
+              }
+              required
+            />
+          </div>
 
-            {/* PDF Upload */}
-            <div className="relative">
-              <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Upload PDF
-              </label>
-              <Input
-                type="file"
-                accept="application/pdf"
-                className="mt-2"
-                onChange={(e) =>
-                  setPdfFile(e.target.files ? e.target.files[0] : null)
-                }
-                required
-              />
-            </div>
+          {/* PDF Upload */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Upload PDF
+            </label>
+            <Input
+              type="file"
+              accept="application/pdf"
+              className="mt-2"
+              onChange={(e) =>
+                setPdfFile(e.target.files ? e.target.files[0] : null)
+              }
+              required
+            />
           </div>
         </div>
+      </div>
 
-        <div className="flex justify-end gap-4 pt-4 border-t border-gray-200">
-          <Button
-            variant="outline"
-            type="button"
-            className="border-[#265073] text-[#265073] hover:bg-[#265073] hover:text-white"
-            onClick={() => {
-              // Clear form fields
-              setAuthorName("");
-              setBookTitle("");
-              setPublicationDate("");
-              setIsbn("");
-              setGenre("");
-              setDescription("");
-              setCoverFile(null);
-              setPdfFile(null);
-              navigate("/publisher-profile");
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="bg-[#265073] text-white hover:bg-[#1a3b5c]"
-            onClick={handleSubmit}
-          >
-            Add Book
-          </Button>
-        </div>
-      </DialogContent>
-
+      <div className="flex justify-end gap-4 pt-4 border-t border-gray-200">
+        <Button
+          variant="outline"
+          type="button"
+          className="border-[#265073] text-[#265073] hover:bg-[#265073] hover:text-white"
+          onClick={() => {
+            // Clear form fields and close the dialog
+            setAuthorName("");
+            setBookTitle("");
+            setPublicationDate("");
+            setIsbn("");
+            setGenre("");
+            setDescription("");
+            setCoverFile(null);
+            setPdfFile(null);
+            onClose();
+        }}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          className="bg-[#265073] text-white hover:bg-[#1a3b5c]"
+          onClick={handleSubmit}
+        >
+          Add Book
+        </Button>
+      </div>
+    </DialogContent>
   );
 }
