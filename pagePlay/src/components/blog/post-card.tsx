@@ -1,4 +1,3 @@
-// PostCard.tsx
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -62,85 +61,107 @@ export function PostCard({
   };
 
   return (
-    <Card className="bg-white shadow-md">
-      {/* Post Header */}
-      <div className="p-4 flex items-start gap-3">
-        <Avatar>
-          <AvatarImage src={post.image} />
-          <AvatarFallback>{post.author.name}</AvatarFallback>
-        </Avatar>
-        <div>
-          <h3 className="font-semibold text-[#265073]">
-            {post.firstname + " " + post.lastname}
-          </h3>
-          <p className="text-sm text-gray-500">
-            {new Date(post.timestamp).toLocaleDateString("en-GB")}
-          </p>
+    <Card className="overflow-hidden shadow-sm">
+      <div className="p-4">
+        <div className="flex items-start gap-2">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={post.image} alt={post.author.name} />
+            <AvatarFallback>{post.author.name}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <h3 className="font-semibold text-[15px] leading-5">
+              {post.firstname + " " + post.lastname}
+            </h3>
+            <p className="text-xs text-gray-500">
+              {new Date(post.timestamp).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
         </div>
+
+        <div className="mt-3 space-y-3">
+          {post.content && (
+            <p className="text-[15px] leading-6 text-gray-900">
+              {post.content}
+            </p>
+          )}
+          {post.image && (
+            <img
+              src={post.post_image || "/placeholder.svg"}
+              alt="Post content"
+              className="w-full object-cover rounded-lg"
+            />
+          )}
+        </div>
+
+        {(likes > 0 || (post.comments && post.comments.length > 0)) && (
+          <div className="flex items-center justify-between mt-3 py-2 text-sm text-gray-500">
+            {likes > 0 && (
+              <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center w-4.5 h-4.5 rounded-full bg-[#1877F2]">
+                  <Heart className="w-3 h-3 text-white fill-white" />
+                </div>
+                <span>{likes}</span>
+              </div>
+            )}
+            {post.comments && post.comments.length > 0 && (
+              <button
+                onClick={() => setShowComments(!showComments)}
+                className="text-gray-500 hover:underline"
+              >
+                {post.comments.length}{" "}
+                {post.comments.length === 1 ? "comment" : "comments"}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Post Content */}
-      <div className="px-4 pb-4">
-        <p className="text-gray-700 whitespace-pre-wrap">{post.content}</p>
-      </div>
-
-      {/* Post Image */}
-      {post.image && (
-        <div className="px-4 pb-4">
-          <img
-            src={post.post_image}
-            alt="Post content"
-            className="rounded-lg max-h-[500px] w-full object-cover"
-          />
-        </div>
-      )}
-
-      {/* Post Actions */}
-      <div className="px-4 py-2 border-t border-gray-100 flex items-center justify-between">
+      <div className="px-4 py-1 border-t border-b flex">
         <Button
           variant="ghost"
-          size="sm"
-          className={`hover:text-[#265073]/80 ${
-            isLiked ? "text-red-500" : "text-[#265073]"
+          className={`flex-1 flex items-center justify-center gap-2 ${
+            isLiked ? "text-[#1877F2]" : "text-gray-600"
           }`}
           onClick={handleLike}
         >
-          <Heart className={`h-4 w-4 mr-1 ${isLiked ? "fill-red-500" : ""}`} />
-          {likes > 0 && likes}
+          <Heart
+            className={`h-5 w-5 ${isLiked ? "fill-[#1877F2]" : "fill-none"}`}
+          />
+          Like
         </Button>
         <Button
           variant="ghost"
-          size="sm"
-          className="text-[#265073] hover:text-[#265073]/80"
+          className="flex-1 flex items-center justify-center gap-2 text-gray-600"
           onClick={() => setShowComments(!showComments)}
         >
-          <MessageCircle className="h-4 w-4 mr-1" />
-          {post.comments && post.comments.length}
+          <MessageCircle className="h-5 w-5" />
+          Comment
         </Button>
       </div>
 
-      {/* Comments Section */}
-      <div className="px-4 py-2 border-t border-gray-100">
-        <div className="mb-4">
-          <CommentInput
-            user={currentUser}
-            onSubmit={(content) => {
-              onComment(post.id, content);
-              setShowComments(true);
-            }}
-          />
-        </div>
-        {showComments && (
-          <div className="space-y-4">
-            {post.comments &&
-              post.comments.map((comment) => (
-                <CommentItem
-                  key={comment.id}
-                  comment={comment}
-                  onLike={onLikeComment}
-                  onReply={onReplyComment}
-                />
-              ))}
+      <div className="p-4 space-y-4">
+        <CommentInput
+          user={currentUser}
+          onSubmit={(content) => {
+            onComment(post.id, content);
+            setShowComments(true);
+          }}
+        />
+        {showComments && post.comments && post.comments.length > 0 && (
+          <div className="space-y-3">
+            {post.comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                onLike={onLikeComment}
+                onReply={onReplyComment}
+              />
+            ))}
           </div>
         )}
       </div>

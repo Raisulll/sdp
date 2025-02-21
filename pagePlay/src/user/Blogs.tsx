@@ -1,4 +1,3 @@
-// BlogFeed.tsx
 import { CreatePost } from "@/components/blog/create-post";
 import { PostCard } from "@/components/blog/post-card";
 import Navbar from "@/components/navbar";
@@ -59,7 +58,6 @@ export default function BlogFeed() {
                 throw new Error("Failed to fetch comments");
               }
               const commentsData = await commentResponse.json();
-              console.log(commentsData);
               return {
                 ...post,
                 author: user[0],
@@ -87,12 +85,31 @@ export default function BlogFeed() {
     fetchPosts();
   }, [user]);
 
-  // Skeleton Loader for when user data isn’t ready
+  // Skeleton Loader for when user data isn't ready
   const SkeletonLoader = () => (
-    <div className="min-h-screen bg-[#F5F0E8] pt-24 flex justify-center items-center">
-      <div className="animate-pulse space-y-4">
-        <div className="w-64 h-8 bg-gray-300 rounded"></div>
-        <div className="w-96 h-4 bg-gray-300 rounded"></div>
+    <div className="min-h-screen bg-background pt-24">
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="space-y-6">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-card rounded-lg p-6 space-y-4 animate-pulse"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-full bg-muted" />
+                <div className="space-y-2">
+                  <div className="h-4 w-32 bg-muted rounded" />
+                  <div className="h-3 w-24 bg-muted rounded" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-muted rounded" />
+                <div className="h-4 w-3/4 bg-muted rounded" />
+              </div>
+              <div className="h-48 bg-muted rounded-lg" />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -119,7 +136,7 @@ export default function BlogFeed() {
         ...newPost,
         author: currentUser,
         comments: [],
-      }; // Ensure comments is an array
+      };
       setPosts((prevPosts) => [newPostWithAuthor, ...prevPosts]);
     } catch (error) {
       console.error("Error creating post:", error);
@@ -229,11 +246,11 @@ export default function BlogFeed() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FEFFF0]">
+    <div className="min-h-screen bg-[#F0F2F5]">
       <Navbar />
-      <main className="max-w-2xl mx-auto px-4 pt-24 pb-12">
+      <main className="max-w-[680px] mx-auto px-4 pt-20 pb-12">
         <CreatePost user={currentUser} onCreatePost={handleCreatePost} />
-        <div className="space-y-6">
+        <div className="space-y-4">
           {posts.map((post) => (
             <PostCard
               key={post.id}

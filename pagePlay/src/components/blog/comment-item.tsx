@@ -20,37 +20,41 @@ export function CommentItem({ comment, onLike, onReply }: CommentItemProps) {
   };
 
   return (
-    <div className="flex gap-2">
-      <Avatar className="h-8 w-8">
-        <AvatarImage src={comment.author.avatar} />
+    <div className="flex gap-2 group">
+      <Avatar className="h-8 w-8 shrink-0">
+        <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
         <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
-        <div className="bg-gray-50 rounded-lg p-2">
-          <p className="font-semibold text-sm text-[#265073]">
-            {comment.author.name}
-          </p>
-          <p className="text-sm text-gray-700">{comment.content}</p>
+        <div className="inline-block rounded-2xl bg-gray-100 px-3 py-2">
+          <p className="font-semibold text-sm">{comment.author.name}</p>
+          <p className="text-sm">{comment.content}</p>
         </div>
-        <div className="flex items-center gap-4 mt-1">
+        <div className="flex items-center gap-2 mt-1 text-xs">
           {comment.parent_id == null && (
             <>
               <button
-                className="text-xs text-gray-500 hover:text-[#265073]"
+                className="font-semibold text-gray-500 hover:underline"
                 onClick={() => onLike?.(comment.id)}
               >
-                Like {comment.likes > 0 && `(${comment.likes})`}
+                Like
+                {comment.likes > 0 && ` · ${comment.likes}`}
               </button>
+              <span className="text-gray-500">·</span>
               <button
-                className="text-xs text-gray-500 hover:text-[#265073]"
+                className="font-semibold text-gray-500 hover:underline"
                 onClick={() => setIsReplying(!isReplying)}
               >
                 Reply
               </button>
+              <span className="text-gray-500">·</span>
             </>
           )}
-          <span className="text-xs text-gray-500">
-            {new Date(comment.timestamp).toLocaleDateString()}
+          <span className="text-gray-500">
+            {new Date(comment.timestamp).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+            })}
           </span>
         </div>
         {isReplying && (
@@ -59,7 +63,7 @@ export function CommentItem({ comment, onLike, onReply }: CommentItemProps) {
           </div>
         )}
         {comment.replies && comment.replies.length > 0 && (
-          <div className="ml-4 mt-2 space-y-4">
+          <div className="ml-2 mt-2 space-y-3">
             {comment.replies.map((reply) => (
               <CommentItem
                 key={reply.id}
