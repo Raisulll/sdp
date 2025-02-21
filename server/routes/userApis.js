@@ -3,6 +3,92 @@ import sql from "../db.js";
 
 const router = express.Router();
 
+
+// View profile info API for user
+router.get("/profileInfo", async (req, res) => {
+  const { userId } = req.query;
+
+  console.log("User ID:", userId);
+
+  if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+      // Fetch user profile by joining 'users' and 'all_users' tables
+      const profileInfo = await sql` SELECT * FROM users WHERE id = ${userId} `;
+
+      console.log("Profile info:", profileInfo);
+
+      res.status(200).json(profileInfo); // Return the user profile
+  } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+
+router.post("/updateProfileImage", async (req, res) => {
+  const { userId, image } = req.body; // Extract userId & image from request body
+  console.log("Received:", userId, image);
+
+  try {
+    // Use double quotes around "user_id" to avoid case-sensitivity issues
+    await sql`
+      UPDATE users SET image = ${image} WHERE "id" = ${userId}
+    `;
+    res.status(200).json({ message: "Profile image updated successfully!" });
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+
+router.post("/updateProfile", async (req, res) => {
+  const { userId, fullName, location, birthday } = req.body;
+
+  console.log("Updating profile for user ID:", userId);
+
+  // Validate Input
+  if (!userId || !fullName || !location || !birthday ) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+
+  try {
+    // Split first name and last name safely
+    const [firstname, ...lastname] = fullName.trim().split(/\s+/); // Splits by spaces, removes extra spaces
+    const lastnameStr = lastname.length > 0 ? lastname.join(" ") : ""; // Ensures last name isn't 'undefined'
+
+    // Update User Profile
+    const result = await sql`
+      UPDATE users 
+      SET firstname = ${firstname}, 
+          lastname = ${lastnameStr}, 
+          address = ${location}, 
+          date_of_birth = ${birthday}, 
+          updated_at = NOW()
+      WHERE id = ${userId}
+      RETURNING *;  -- Return the updated user data
+    `;
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    console.log("Profile updated successfully:", result[0]);
+    res.status(200).json({ message: "Profile updated successfully!", user: result[0] });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ error: "Something went wrong!", details: error.message });
+  }
+});
+
+
+
+
+
 // view pdf api for user
 router.get("/pdfUrl", async (req, res) => {
   // console.log("User view pdf api");
@@ -84,7 +170,7 @@ router.get("/rating", async (req, res) => {
   }
 });
 
-//  addToCart api for user
+// addToCart API for user
 router.post("/addToCart", async (req, res) => {
   const { bookId, publisherId, userId } = req.body;
 
@@ -93,8 +179,23 @@ router.post("/addToCart", async (req, res) => {
   }
 
   try {
-    // Insert into the cart table and return the inserted row.
-    const result = await sql`
+    // Check if the book is already in the cart
+    const existingCartItem = await sql`
+      SELECT * FROM cart 
+      WHERE book_id = ${bookId} 
+        AND publisher_id = ${publisherId} 
+        AND user_id = ${userId}
+    `;
+
+    if (existingCartItem.length > 0) {
+      return res.status(200).json({
+        message: "Book already added to cart",
+        cart: existingCartItem,
+      });
+    }
+
+    // Insert into the cart table
+    const newCartItem = await sql`
       INSERT INTO cart (book_id, publisher_id, user_id)
       VALUES (${bookId}, ${publisherId}, ${userId})
       RETURNING *;
@@ -102,15 +203,16 @@ router.post("/addToCart", async (req, res) => {
 
     res.status(200).json({
       message: "Book added to cart",
-      cart: result,
+      cart: newCartItem,
     });
   } catch (error) {
     console.error("Error adding to cart:", error);
-    res
-      .status(500)
-      .json({ error: "Something went wrong while adding to cart." });
+    res.status(500).json({
+      error: "Something went wrong while adding to cart.",
+    });
   }
 });
+
 
 
 // wishlist
@@ -130,5 +232,53 @@ router.get("/wishlist", async (req, res) => {
     res.status(500).json("Something broke!");
   }
 })
+
+
+// DELETE /user/wishlist - Remove an item from the wishlist
+router.delete('/wishlist', async (req, res) => {
+  const { userId, bookId } = req.body;
+
+  // Check if required fields are present
+  if (!userId || !bookId) {
+    return res.status(400).json({ error: 'Missing required fields.' });
+  }
+
+  try {
+    // Check if the item exists in the wishlist
+    const existingItem = await sql`
+      SELECT * FROM cart 
+      WHERE user_id = ${userId} AND book_id = ${bookId}
+    `;
+
+    if (existingItem.length === 0) {
+      return res.status(404).json({ error: 'Item not found in cart.' });
+    }
+
+    // Remove the item from the cart
+    await sql`
+      DELETE FROM cart 
+      WHERE user_id = ${userId} AND book_id = ${bookId}
+    `;
+
+    res.status(200).json({ message: 'Item removed from cart successfully.' });
+  } catch (error) {
+    console.error('Error removing item from cart:', error);
+    res.status(500).json({ error: 'Something went wrong while removing the item from the cart.' });
+  }
+});
+
+// fetch post api for user
+router.get("/fetchPosts", async(req, res) => {
+  try{
+    const posts = await sql`select * from posts`;
+    res.status(200).json(posts);
+  } catch(error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+
+
 
 export default router;

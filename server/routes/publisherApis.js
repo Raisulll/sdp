@@ -136,4 +136,77 @@ router.get("/booklist", async (req, res) => {
   }
 });
 
+// publisher profile API
+router.get("/profileInfo", async(req, res)=>{
+  console.log("Publisher profile API");
+  const {publisherId} = req.query;
+  try{
+    console.log("Publisher ID:", publisherId);
+    const publisherInfo = await sql`
+      SELECT 
+      *
+      FROM publisher
+      WHERE id = ${publisherId}
+    `;
+    console.log("Publisher Info:", publisherInfo);
+    res.status(200).json(publisherInfo);
+  }catch(error){
+    console.error(error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+// update publisher profile image API
+
+router.post("/updateProfileImage", async(req, res)=>{
+  console.log("Publisher update profile image API");
+  const {publisherId, imageUrl} = req.body;
+  try{
+    console.log("Publisher ID:", publisherId);
+    console.log("Image URL:", imageUrl);
+    const updatedImage = await sql`
+      UPDATE publisher
+      SET image = ${imageUrl}
+      WHERE id = ${publisherId}
+      RETURNING image;
+    `;
+    console.log("Updated Image:", updatedImage);
+    res.status(200).json(updatedImage);
+  }catch(error){
+    console.error(error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+
+// update publisher profile API
+router.post("/updateProfile", async(req, res)=>{
+  console.log("Publisher update profile API");
+  const {publisherId, name, email, phone, address, description} = req.body;
+  try{
+    console.log("Publisher ID:", publisherId);
+    console.log("Name:", name);
+    console.log("Email:", email);
+    console.log("Phone:", phone);
+    console.log("Address:", address);
+    console.log("Description:", description);
+    const updatedProfile = await sql`
+      UPDATE publisher
+      SET 
+      name = ${name},
+      email = ${email},
+      phone = ${phone},
+      address = ${address},
+      description = ${description}
+      WHERE id = ${publisherId}
+      RETURNING *;
+    `;
+    console.log("Updated Profile:", updatedProfile);
+    res.status(200).json(updatedProfile);
+  }catch(error){
+    console.error(error);
+    res.status(500).json("Something broke!");
+  }
+});
+
 export default router;

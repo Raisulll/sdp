@@ -13,9 +13,9 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Heart,
   MessageCircle,
   MoreVertical,
+  ShoppingCart,
   Star,
   ThumbsUp,
 } from "lucide-react";
@@ -52,6 +52,26 @@ interface Review {
   likes: number;
 }
 
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(
+    dateString.endsWith("Z") ? dateString : `${dateString}Z`
+  );
+  const now = new Date();
+  const diff = now.getTime() - date.getTime(); // in ms
+
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return `${seconds} sec${seconds !== 1 ? "s" : ""} ago`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min${minutes !== 1 ? "s" : ""} ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} day${days !== 1 ? "s" : ""} ago`;
+}
+
 const BookDetails: React.FC = () => {
   const { bookId, publisherId } = useParams<{
     bookId: string;
@@ -66,9 +86,10 @@ const BookDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [reviewsPage, setReviewsPage] = useState(1);
+  // State to control whether to show all reviews or only the first two.
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
-  // fetch user form local storage
+  // fetch user from local storage
   const localdata = localStorage.getItem("user");
   const actualdata = localdata ? JSON.parse(localdata) : null;
 
@@ -101,8 +122,6 @@ const BookDetails: React.FC = () => {
   const fetchSimilarBooks = useCallback(
     async (genre: string) => {
       try {
-        console.log("bookId", bookId, "genre", genre);
-
         const response = await fetch(
           `http://localhost:5000/user/similarBooks?bookId=${bookId}&genre=${genre}`
         );
@@ -136,31 +155,34 @@ const BookDetails: React.FC = () => {
         throw new Error(`Failed to fetch reviews: ${response.statusText}`);
       }
       const data = await response.json();
-
-      const formattedReviews = data.map((review: any) => ({
-        id: review.id,
-        firstname: review.firstname,
-        lastname: review.lastname,
-        image: review.image,
-        rating: review.rating,
-        created_at: review.created_at,
-        comment: review.comment,
-        likes: review.likes,
-      }));
-
-      setReviews((prev) =>
-        reviewsPage === 1 ? formattedReviews : [...prev, ...formattedReviews]
-      );
+      console.log(data);
+      const formattedReviews = data
+        .map((review: any) => ({
+          id: review.id,
+          firstname: review.firstname,
+          lastname: review.lastname,
+          image: review.image,
+          rating: review.rating,
+          created_at: review.created_at,
+          comment: review.comment,
+          likes: review.likes,
+        }))
+        // Sort reviews so the most recent comes first
+        .sort(
+          (a: Review, b: Review) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      setReviews(formattedReviews);
     } catch (err) {
       console.error("Error fetching reviews:", err);
     }
-  }, [bookId, publisherId, reviewsPage]);
+  }, [bookId, publisherId]);
 
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
 
-  // fetch the rating of the book
+  // Fetch the rating of the book
   const fetchRating = useCallback(async () => {
     try {
       const response = await fetch(
@@ -174,7 +196,7 @@ const BookDetails: React.FC = () => {
     } catch (err) {
       console.error("Error fetching rating:", err);
     }
-  }, [bookId]);
+  }, [bookId, publisherId]);
 
   useEffect(() => {
     fetchRating();
@@ -201,8 +223,7 @@ const BookDetails: React.FC = () => {
           title: "Added to cart",
           description: "The book has been successfully added to your cart.",
         });
-        // navigate to wish-list
-        window.location.href = "/wish-list";
+        window.location.href = "/cart";
       } else {
         const errorMessage = await response.text();
         toast({
@@ -221,9 +242,18 @@ const BookDetails: React.FC = () => {
     }
   };
 
-  const loadMoreReviews = () => {
-    setReviewsPage((prev) => prev + 1);
-  };
+  // Compute the reviews to display: only 2 initially or all if showAllReviews is true.
+  const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 2);
+
+  // Calculate rating distribution for each star (5, 4, 3, 2, 1)
+  const totalReviewCount = reviews.length;
+  const ratingDistribution = [5, 4, 3, 2, 1].map((star) => {
+    const count = reviews.filter(
+      (r) => Math.round(parseFloat(r.rating)) === star
+    ).length;
+    const percent = totalReviewCount ? (count / totalReviewCount) * 100 : 0;
+    return { star, count, percent };
+  });
 
   // Skeleton Loader
   const SkeletonLoader = () => (
@@ -284,8 +314,8 @@ const BookDetails: React.FC = () => {
                   className="w-full"
                   onClick={handleAddToCart}
                 >
-                  <Heart className="h-4 w-4 mr-2" />
-                  Cart
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Add to Cart
                 </Button>
               </div>
             </div>
@@ -360,7 +390,7 @@ const BookDetails: React.FC = () => {
             <div className="grid md:grid-cols-[200px_1fr] gap-8">
               <div className="text-center">
                 <div className="text-4xl font-bold text-[#265073] mb-2">
-                  {book[0].rating}
+                  {book?.[0]?.rating || "N/A"}
                 </div>
                 <div className="flex justify-center mb-2">
                   {Array(5)
@@ -369,7 +399,7 @@ const BookDetails: React.FC = () => {
                       <Star
                         key={i}
                         className={`h-5 w-5 ${
-                          i < Math.floor(book[0].rating)
+                          i < Math.floor(book?.[0]?.rating || 0)
                             ? "text-yellow-400 fill-current"
                             : "text-gray-300"
                         }`}
@@ -377,23 +407,29 @@ const BookDetails: React.FC = () => {
                     ))}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {book[0].total_reviews} ratings
+                  {book?.[0]?.total_reviews || 0} ratings
                 </div>
               </div>
               <div className="space-y-2">
-                {[5, 4, 3, 2, 1].map((stars) => (
-                  <div key={stars} className="flex items-center gap-4">
+                {ratingDistribution.map(({ star, count, percent }) => (
+                  <div key={star} className="flex items-center gap-4">
                     <div className="flex items-center w-20">
-                      {Array(stars)
+                      {Array(star)
                         .fill(0)
                         .map((_, i) => (
                           <Star
-                            key={i}
+                            key={`${star}-${i}`}
                             className="h-4 w-4 text-yellow-400 fill-current"
                           />
                         ))}
                     </div>
-                    <Progress value={Math.random() * 100} className="flex-1" />
+                    <Progress value={percent} className="flex-1" />
+                    <span
+                      className="text-sm text-gray-600"
+                      title={`${count} reviews`}
+                    >
+                      {count}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -403,7 +439,7 @@ const BookDetails: React.FC = () => {
           {/* Reviews */}
           <div className="space-y-6 mb-12">
             <h2 className="text-xl font-semibold">Recent Reviews</h2>
-            {reviews.map((review) => (
+            {displayedReviews.map((review) => (
               <div key={review.id} className="bg-white rounded-lg p-6">
                 <div className="flex items-start gap-4">
                   <Avatar>
@@ -438,9 +474,7 @@ const BookDetails: React.FC = () => {
                               ))}
                           </div>
                           <span className="mx-2">•</span>
-                          <span>
-                            {new Date(review.created_at).toLocaleDateString()}
-                          </span>
+                          <span>{formatRelativeTime(review.created_at)}</span>
                         </div>
                       </div>
                       <Button variant="ghost" size="sm" className="space-x-1">
@@ -468,16 +502,19 @@ const BookDetails: React.FC = () => {
                 </div>
               </div>
             ))}
-            <div className="text-center">
-              <Button
-                variant="outline"
-                className="space-x-2"
-                onClick={loadMoreReviews}
-              >
-                <MessageCircle className="h-4 w-4" />
-                <span>Show More Reviews</span>
-              </Button>
-            </div>
+            {/* Render Show More button only if not all reviews are shown and there are more than two reviews */}
+            {!showAllReviews && reviews.length > 2 && (
+              <div className="text-center">
+                <Button
+                  variant="outline"
+                  className="space-x-2"
+                  onClick={() => setShowAllReviews(true)}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>Show More Reviews</span>
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Similar Books */}

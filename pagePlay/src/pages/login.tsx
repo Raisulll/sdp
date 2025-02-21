@@ -1,11 +1,18 @@
+"use client";
+
+import type React from "react";
+
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { ForgotPasswordModal } from "@/components/forgot-password-modal";
 import Navbar_guest from "@/components/navbar_guest";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+
 import emailIcon from "../assets/email-icon.svg";
 import bookStack from "../assets/large-book.svg";
 import lockIcon from "../assets/lock-icon.svg";
@@ -20,34 +27,48 @@ export default function Login() {
     password: "",
   });
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt with:", formData);
-    const result = await fetch("http://localhost:5000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await result.json();
-    // set the data to local storage
-    localStorage.setItem("user", JSON.stringify(data));
-    console.log(data);
-    
-    if(data.role === "user") {
-      navigate("/user-profile");
-    }
-    else if(data.role === "publisher") {
-      navigate("/publisher-profile");
-    }
-    else if(data.role === "admin" || data.role === "superadmin") {
-      navigate("/admin");
-    }
-    else {
-      console.log("Invalid role");
+    setIsLoading(true);
+    try {
+      const result = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await result.json();
+
+      if (!result.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      localStorage.setItem("user", JSON.stringify(data));
+
+      toast.success("Login successful!");
+
+      if (data.role === "user") {
+        navigate("/user-profile");
+      } else if (data.role === "publisher") {
+        navigate("/publisher-profile");
+      } else if (data.role === "admin"  || data.role === "superadmin") {
+        navigate("/admin");
+      } else {
+        throw new Error("Invalid role");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An error occurred during login"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,7 +93,7 @@ export default function Login() {
         <div className="w-full max-w-[800px] bg-[#a4c0ed] rounded-[10px] bottom-[85px] p-4 sm:p-8 relative overflow-hidden">
           {/* Tree illustration */}
           <img
-            src={treeIllustration}
+            src={treeIllustration || "/placeholder.svg"}
             alt="Tree illustration"
             className="absolute bottom-0 left-0 max-w-[20%] h-auto"
           />
@@ -102,7 +123,7 @@ export default function Login() {
                   className="w-full h-[40px] sm:h-[60px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-6 text-base sm:text-lg font-medium border-none outline-none"
                 />
                 <img
-                  src={emailIcon}
+                  src={emailIcon || "/placeholder.svg"}
                   alt="Email Icon"
                   className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                 />
@@ -119,7 +140,7 @@ export default function Login() {
                   className="w-full h-[40px] sm:h-[60px] bg-white rounded-[40px] pl-[60px] sm:pl-[81px] pr-12 text-base sm:text-lg font-medium border-none outline-none"
                 />
                 <img
-                  src={lockIcon}
+                  src={lockIcon || "/placeholder.svg"}
                   alt="Lock Icon"
                   className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px]"
                 />
@@ -140,8 +161,13 @@ export default function Login() {
                 <Button
                   type="submit"
                   className="w-full sm:w-[174px] h-[49px] bg-[#f5ffde] hover:bg-[#f5ffde]/90 text-black font-medium text-lg sm:text-xl rounded-[46px]"
+                  disabled={isLoading}
                 >
-                  Login
+                  {isLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
 
                 <button
@@ -165,17 +191,17 @@ export default function Login() {
 
         {/* Decorative Images */}
         <img
-          src={bookStack}
+          src={bookStack || "/placeholder.svg"}
           alt="Book Stack"
           className="absolute bottom-[5%] left-[0%] max-w-[26%] h-auto hidden lg:block"
         />
         <img
-          src={floatingBook}
+          src={floatingBook || "/placeholder.svg"}
           alt="Floating Book"
           className="absolute top-[5%] right-[15%] max-w-[25%] h-auto hidden lg:block"
         />
         <img
-          src={readingPerson}
+          src={readingPerson || "/placeholder.svg"}
           alt="Reading Person"
           className="absolute bottom-[5%] right-10 max-w-[26%] h-auto hidden lg:block"
         />
@@ -184,6 +210,7 @@ export default function Login() {
         isOpen={forgotPasswordOpen}
         onClose={() => setForgotPasswordOpen(false)}
       />
+      <ToastContainer position="top-right" autoClose={5000} />
     </>
   );
 }

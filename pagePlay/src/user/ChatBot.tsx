@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -5,9 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
-import { useState } from "react";
-
-const API_KEY = "AIzaSyC5TpEXfM_sSL_juB4Ox1MJ1e_V-j5rk_k";
+const API_KEY = import.meta.env.VITE_GEMINI_API;
 
 interface Message {
   id: string;
@@ -20,6 +19,18 @@ export default function ChatBot() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const savedChatHistory = localStorage.getItem("chatHistory");
+    if (savedChatHistory) {
+      setMessages(JSON.parse(savedChatHistory));
+    }
+  }, []);
+
+  // Save chat history to local storage whenever messages change
+  useEffect(() => {
+    localStorage.setItem("chatHistory", JSON.stringify(messages));
+  }, [messages]);
 
   const formatTimestamp = () => {
     const now = new Date();
@@ -41,9 +52,24 @@ export default function ChatBot() {
       timestamp: formatTimestamp(),
     };
 
+    // Add the user message to state immediately
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+
+    // Build conversation context using previous messages plus current user input
+    // For assistant messages, strip any HTML formatting before sending context.
+    const conversationContext = [...messages, userMessage]
+      .map((message) => {
+        const roleLabel = message.role === "user" ? "User" : "Assistant";
+        // Remove HTML tags if message is from the assistant
+        const plainContent =
+          message.role === "assistant"
+            ? message.content.replace(/<[^>]*>/g, "")
+            : message.content;
+        return `${roleLabel}: ${plainContent}`;
+      })
+      .join("\n");
 
     try {
       const response = await fetch(
@@ -56,7 +82,8 @@ export default function ChatBot() {
           body: JSON.stringify({
             contents: [
               {
-                parts: [{ text: input }],
+                // Send the full conversation context so the model has the previous context
+                parts: [{ text: conversationContext }],
               },
             ],
           }),

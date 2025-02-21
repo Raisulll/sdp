@@ -11,16 +11,18 @@ import { type FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 const socialLinks = {
+  twitter: undefined,
   facebook: "https://facebook.com/pageplay",
   instagram: "https://instagram.com/pageplay",
   github: "https://github.com/pageplay",
+  linkedin: undefined,
 };
 
 const HomePage: FC = () => {
   const navigate = useNavigate();
 
   const handleBookClick = () => {
-    navigate(`/book-details/12/1`);
+    navigate(`/book-details/24/1`);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
