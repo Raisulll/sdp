@@ -4,36 +4,63 @@ import { Label } from "@/components/ui/label";
 import { FaCcMastercard } from "react-icons/fa";
 import Navbar from "@/components/navbar";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-interface CheckoutItem {
-  title: string;
-  price: number;
-}
+import { useNavigate, useLocation } from "react-router-dom";
 
 const CheckoutPage: React.FC = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const stateData =
+    (location.state as {
+      total: number;
+      bookIds: number[];
+      publisherIds: number[];
+    }) || {};
+  const total = stateData.total || queryParams.get("total") || "0";
+  const bookIds = stateData.bookIds || [];
+  const publisherIds = stateData.publisherIds || [];
+  console.log(
+    "Total:",
+    total,
+    "Book IDs:",
+    bookIds,
+    "Publisher IDs:",
+    publisherIds
+  );
+
+  // Default dummy data for card details.
   const [formData, setFormData] = useState({
-    cardholderName: "",
-    cardNumber: "",
-    expiry: "",
-    cvc: "",
+    cardholderName: "Anika Tasnim",
+    cardNumber: "1234 5678 1234 5678",
+    expiry: "12/25",
+    cvc: "123",
     discountCode: "",
   });
 
-  const items: CheckoutItem[] = [
-    { title: "Book Name", price: 86.73 },
-    { title: "Book Name", price: 75.6 },
-  ];
-
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user.userId;
 
-  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
-  const onlineFee = 5.0;
-  const total = subtotal + onlineFee;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Payment submitted:", formData);
+  // Remove event parameter here
+  const handleSubmit = async (bookId: number, publisherId: number) => {
+    try {
+      const response = await fetch("http://localhost:5000/user/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          bookId,
+          publisherId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Payment failed");
+      }
+      // Handle successful payment (e.g., show a success message)
+    } catch (error) {
+      console.error("Error making payment:", error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,16 +77,13 @@ const CheckoutPage: React.FC = () => {
       <div className="min-h-screen bg-[#F5F0E8] pt-24">
         <div className="max-w-3xl mx-auto px-4 py-8">
           <h1 className="text-2xl font-bold mb-8">Let's Make Payment</h1>
-
           <div className="grid md:grid-cols-[1fr_300px] gap-8">
             <div className="bg-white p-6 rounded-lg">
               <p className="text-sm text-gray-600 mb-6">
                 To start your subscription, input your card details to make
-                payment. You will be redirected to your bank's authorization
-                page.
+                payment.
               </p>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="cardholderName">Cardholder's Name</Label>
                   <Input
@@ -70,7 +94,6 @@ const CheckoutPage: React.FC = () => {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="cardNumber">Card Number</Label>
                   <div className="relative">
@@ -82,15 +105,9 @@ const CheckoutPage: React.FC = () => {
                       maxLength={19}
                       required
                     />
-                    {/* <img
-                    src={mastercard}
-                    alt="Mastercard"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-6"
-                  /> */}
                     <FaCcMastercard className="absolute right-3 top-1/2 -translate-y-1/2 h-6" />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="expiry">Expiry</Label>
@@ -104,7 +121,6 @@ const CheckoutPage: React.FC = () => {
                       required
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="cvc">CVC</Label>
                     <Input
@@ -117,7 +133,6 @@ const CheckoutPage: React.FC = () => {
                     />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="discountCode">Discount Code</Label>
                   <div className="flex gap-2">
@@ -132,34 +147,27 @@ const CheckoutPage: React.FC = () => {
                     </Button>
                   </div>
                 </div>
-
                 <Button
                   type="submit"
                   className="w-full bg-[#265073] hover:bg-[#265073]/90"
-                  onClick={() => navigate("/home")}
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    // Process payment for each book and publisher pair
+                    for (let i = 0; i < bookIds.length; i++) {
+                      await handleSubmit(bookIds[i], publisherIds[i]);
+                    }
+                    navigate("/home");
+                  }}
                 >
                   Pay
                 </Button>
               </form>
             </div>
-
             <div className="bg-[#E5EADD] p-6 rounded-lg h-fit">
               <h2 className="text-lg font-semibold mb-4">You're paying:</h2>
-              <div className="space-y-3 text-sm">
-                {items.map((item, index) => (
-                  <div key={index} className="flex justify-between">
-                    <span>{item.title}</span>
-                    <span>${item.price.toFixed(2)}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between text-gray-600">
-                  <span>Online Fee</span>
-                  <span>${onlineFee.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between font-semibold text-base pt-3 border-t">
-                  <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
+              <div className="flex justify-between font-semibold text-base pt-3 border-t">
+                <span>Total</span>
+                <span>${total}</span>
               </div>
             </div>
           </div>

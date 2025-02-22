@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
 import {
   MessageCircle,
   MoreVertical,
@@ -20,7 +19,8 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 export interface Book {
   id: number;
@@ -57,7 +57,7 @@ function formatRelativeTime(dateString: string): string {
     dateString.endsWith("Z") ? dateString : `${dateString}Z`
   );
   const now = new Date();
-  const diff = now.getTime() - date.getTime(); // in ms
+  const diff = now.getTime() - date.getTime();
 
   const seconds = Math.floor(diff / 1000);
   if (seconds < 60) return `${seconds} sec${seconds !== 1 ? "s" : ""} ago`;
@@ -75,21 +75,19 @@ function formatRelativeTime(dateString: string): string {
 const BookDetails: React.FC = () => {
   const { bookId, publisherId } = useParams<{
     bookId: string;
-    publisherId: string;
+    publisherId?: string;
   }>();
-  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const [book, setBook] = useState<Book | null>(null);
+  const [book, setBook] = useState<Book[] | null>(null);
   const [similarBooks, setSimilarBooks] = useState<Book[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  // State to control whether to show all reviews or only the first two.
   const [showAllReviews, setShowAllReviews] = useState(false);
 
-  // fetch user from local storage
   const localdata = localStorage.getItem("user");
   const actualdata = localdata ? JSON.parse(localdata) : null;
 
@@ -155,7 +153,6 @@ const BookDetails: React.FC = () => {
         throw new Error(`Failed to fetch reviews: ${response.statusText}`);
       }
       const data = await response.json();
-      console.log(data);
       const formattedReviews = data
         .map((review: any) => ({
           id: review.id,
@@ -167,7 +164,6 @@ const BookDetails: React.FC = () => {
           comment: review.comment,
           likes: review.likes,
         }))
-        // Sort reviews so the most recent comes first
         .sort(
           (a: Review, b: Review) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -182,17 +178,19 @@ const BookDetails: React.FC = () => {
     fetchReviews();
   }, [fetchReviews]);
 
-  // Fetch the rating of the book
+  // Fetch Rating
   const fetchRating = useCallback(async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/user/rating?bookId?bookId=${bookId}?publisherId=${publisherId}`
+        `http://localhost:5000/user/rating?bookId=${bookId}&publisherId=${publisherId}`
       );
       if (!response.ok) {
         throw new Error(`Failed to fetch rating: ${response.statusText}`);
       }
       const data = await response.json();
-      setBook((prev) => (prev ? { ...prev, rating: data.rating } : prev));
+      setBook((prev) =>
+        prev ? [{ ...prev[0], rating: data.rating }, ...prev.slice(1)] : prev
+      );
     } catch (err) {
       console.error("Error fetching rating:", err);
     }
@@ -202,10 +200,25 @@ const BookDetails: React.FC = () => {
     fetchRating();
   }, [fetchRating]);
 
-  const handleAddToCart = async () => {
+  // Updated: Ensure we have a valid publisher ID.
+  const getPublisherId = (): number | null => {
+    if (publisherId) {
+      return Number(publisherId);
+    } else if (book && book[0]?.publisher_id) {
+      return book[0].publisher_id;
+    }
+    return null;
+  };
+
+  const handleBuyNow = async () => {
+    const validPublisherId = getPublisherId();
+    if (!validPublisherId) {
+      toast.error("Publisher information is missing.");
+      return;
+    }
     const data = {
-      bookId: bookId,
-      publisherId: publisherId,
+      bookId: Number(bookId),
+      publisherId: validPublisherId,
       userId: actualdata.userId,
     };
 
@@ -219,33 +232,53 @@ const BookDetails: React.FC = () => {
       });
       if (response.ok) {
         await response.json();
-        toast({
-          title: "Added to cart",
-          description: "The book has been successfully added to your cart.",
-        });
-        window.location.href = "/cart";
+        toast.success("The book has been successfully added to your cart.");
+        navigate("/cart");
       } else {
         const errorMessage = await response.text();
-        toast({
-          title: "Error",
-          description: errorMessage || "Failed to add book to cart.",
-          variant: "destructive",
-        });
+        toast.error(errorMessage || "Failed to add book to cart.");
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred while adding to cart.",
-        variant: "destructive",
-      });
+      toast.error("An unexpected error occurred while adding to cart.");
     }
   };
 
-  // Compute the reviews to display: only 2 initially or all if showAllReviews is true.
-  const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 2);
+  const handleAddToCart = async () => {
+    const validPublisherId = getPublisherId();
+    if (!validPublisherId) {
+      toast.error("Publisher information is missing.");
+      return;
+    }
+    const data = {
+      bookId: Number(bookId),
+      publisherId: validPublisherId,
+      userId: actualdata.userId,
+    };
 
-  // Calculate rating distribution for each star (5, 4, 3, 2, 1)
+    try {
+      const response = await fetch("http://localhost:5000/user/addToCart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        await response.json();
+        toast.success("The book has been successfully added to your cart.");
+      } else {
+        const errorMessage = await response.text();
+        toast.error(errorMessage || "Failed to add book to cart.");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("An unexpected error occurred while adding to cart.");
+    }
+  };
+
+  // Reviews and rating distribution computations…
+  const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 2);
   const totalReviewCount = reviews.length;
   const ratingDistribution = [5, 4, 3, 2, 1].map((star) => {
     const count = reviews.filter(
@@ -255,7 +288,6 @@ const BookDetails: React.FC = () => {
     return { star, count, percent };
   });
 
-  // Skeleton Loader
   const SkeletonLoader = () => (
     <div className="min-h-screen bg-[#F5F0E8] pt-24 flex justify-center items-center">
       <div className="animate-pulse space-y-4">
@@ -292,7 +324,9 @@ const BookDetails: React.FC = () => {
   return (
     <>
       <Navbar />
+
       <div className="min-h-screen bg-[#F5F0E8] pt-24">
+        <ToastContainer />
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Book Header */}
           <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
@@ -306,7 +340,10 @@ const BookDetails: React.FC = () => {
                 ${book[0].price}
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Button className="w-full bg-[#265073] hover:bg-[#265073]/90">
+                <Button
+                  onClick={handleBuyNow}
+                  className="w-full bg-[#265073] hover:bg-[#265073]/90"
+                >
                   Buy Now
                 </Button>
                 <Button
@@ -502,7 +539,6 @@ const BookDetails: React.FC = () => {
                 </div>
               </div>
             ))}
-            {/* Render Show More button only if not all reviews are shown and there are more than two reviews */}
             {!showAllReviews && reviews.length > 2 && (
               <div className="text-center">
                 <Button

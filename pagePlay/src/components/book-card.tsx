@@ -28,7 +28,7 @@ export const BookCard: FC<BookCardProps> = ({
     >
       <div className="relative w-full h-full">
         <img
-          src={book.coverImage}
+          src={book.cover_image_url}
           alt={book.title}
           className="w-full h-full object-cover transition-transform group-hover:scale-105"
         />

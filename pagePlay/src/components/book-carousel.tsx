@@ -8,7 +8,7 @@ import { useCallback, useEffect } from "react";
 
 interface BookCarouselProps {
   books: Book[];
-  onBookClick: (bookId: string) => void;
+  onBookClick: (bookId: number, publisherId: number) => void;
   className?: string;
 }
 
@@ -21,6 +21,8 @@ export function BookCarousel({
     align: "start",
     loop: true,
   });
+
+  console.log("Books:", books);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -49,8 +51,8 @@ export function BookCarousel({
               <BookCard
                 book={book}
                 size="large"
-                onClick={onBookClick}
-                coverImage={book.coverImage}
+                onClick={() => onBookClick(book.id, book.publisher_id)} // ✅ Pass bookId and publisherId correctly
+                coverImage={book.cover_image_url}
               />
             </div>
           ))}

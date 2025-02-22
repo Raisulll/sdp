@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/profileInfo", async (req, res) => {
   const { userId } = req.query;
 
-  // console.log("User ID:", userId);
+  console.log("User ID:", userId);
 
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
@@ -17,7 +17,7 @@ router.get("/profileInfo", async (req, res) => {
     // Fetch user profile by joining 'users' and 'all_users' tables
     const profileInfo = await sql` SELECT * FROM users WHERE id = ${userId} `;
 
-    // console.log("Profile info:", profileInfo);
+    console.log("Profile info:", profileInfo);
 
     res.status(200).json(profileInfo); // Return the user profile
   } catch (error) {
@@ -28,7 +28,7 @@ router.get("/profileInfo", async (req, res) => {
 
 router.post("/updateProfileImage", async (req, res) => {
   const { userId, image } = req.body; // Extract userId & image from request body
-  // console.log("Received:", userId, image);
+  console.log("Received:", userId, image);
 
   try {
     // Use double quotes around "user_id" to avoid case-sensitivity issues
@@ -45,7 +45,7 @@ router.post("/updateProfileImage", async (req, res) => {
 router.post("/updateProfile", async (req, res) => {
   const { userId, fullName, location, birthday } = req.body;
 
-  // console.log("Updating profile for user ID:", userId);
+  console.log("Updating profile for user ID:", userId);
 
   // Validate Input
   if (!userId || !fullName || !location || !birthday) {
@@ -70,7 +70,7 @@ router.post("/updateProfile", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // console.log("Profile updated successfully:", result[0]);
+    console.log("Profile updated successfully:", result[0]);
     res
       .status(200)
       .json({ message: "Profile updated successfully!", user: result[0] });
@@ -84,12 +84,12 @@ router.post("/updateProfile", async (req, res) => {
 
 // view pdf api for user
 router.get("/pdfUrl", async (req, res) => {
-  console.log("User view pdf api");
+  // console.log("User view pdf api");
   const { bookId } = req.query;
-  console.log("Received:", bookId);
+  // console.log("Received:", bookId);
   try {
     const pdfUrl = await sql`select * from books where id = ${bookId}`;
-    console.log(pdfUrl);
+    // console.log(pdfUrl);
     res.status(200).json(pdfUrl);
   } catch (error) {
     // console.error(error);
@@ -99,13 +99,13 @@ router.get("/pdfUrl", async (req, res) => {
 
 // view similar books api for user
 router.get("/similarBooks", async (req, res) => {
-  // console.log("User view similar book api");
+  console.log("User view similar book api");
   const { bookId, genre } = req.query;
-  // console.log("Received:", bookId, genre);
+  console.log("Received:", bookId, genre);
   try {
     const similarBooks =
       await sql`select id, cover_image_url, publisher_id  from books where id = ${bookId} and genre = ${genre}`;
-    // console.log(similarBooks);
+    console.log(similarBooks);
     res.status(200).json(similarBooks);
   } catch (error) {
     // console.error(error);
@@ -116,7 +116,7 @@ router.get("/similarBooks", async (req, res) => {
 // review api for user
 router.get("/reviews", async (req, res) => {
   const { bookId, publisherId } = req.query;
-  // console.log("Received:", bookId, publisherId);
+  console.log("Received:", bookId, publisherId);
   try {
     const reviews = await sql`
       select firstname, lastname, image, rating, r.created_at, comment, likes  
@@ -132,9 +132,9 @@ router.get("/reviews", async (req, res) => {
 
 // add review api for user
 router.post("/addReview", async (req, res) => {
-  console.log("User add review api");
+  // console.log("User add review api");
   const { rating, comment, bookId, publisherId, userId } = req.body;
-  console.log("Received:", rating, comment, bookId, publisherId, userId);
+  // console.log("Received:", rating, comment, bookId, publisherId, userId);
   try {
     await sql`
       INSERT INTO book_review (user_id, publisher_id, rating, comment, book_id)
@@ -150,12 +150,12 @@ router.post("/addReview", async (req, res) => {
 // fetch rating api for books
 router.get("/rating", async (req, res) => {
   const { bookId, publisherId } = req.query;
-  // console.log("Received:", bookId, publisherId);
+  console.log("Received:", bookId, publisherId);
   try {
     const rating = await sql`
       select avg(rating) as rating from book_review where book_id=${bookId} and publisher_id=${publisherId}
     `;
-    console.log(rating);
+    // console.log(rating);
     res.status(200).json(rating);
   } catch (error) {
     // console.error("Error fetching rating:", error);
@@ -209,14 +209,14 @@ router.post("/addToCart", async (req, res) => {
 // wishlist
 router.get("/wishlist", async (req, res) => {
   const { userId } = req.query;
-  // console.log("Received:", userId);
+  console.log("Received:", userId);
   try {
     const wishlist = await sql`
-      select b.title, b.id, b.author, b.cover_image_url, b.price, b.description, c.cart_id
+      select b.title, b.id, b.author, b.cover_image_url, b.price, b.description, c.cart_id, c.publisher_id
       from books b, cart c
       where b.id = c.book_id and c.user_id = ${userId}
     `;
-    // console.log(wishlist);
+    console.log(wishlist);
     res.status(200).json(wishlist);
   } catch (error) {
     console.error("Error fetching wishlist:", error);
@@ -265,7 +265,7 @@ router.get("/fetchPosts", async (req, res) => {
     const posts =
       await sql`select p.author_id,p.content, u.firstname, u.lastname, p.id, p.image as "post_image",p.likes,p.timestamp, u.image from posts p , users u where p.author_id = u.id`;
 
-    // console.log(posts);
+    console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -276,7 +276,7 @@ router.get("/fetchPosts", async (req, res) => {
 // add post api for user
 router.post("/AddPosts", async (req, res) => {
   const { content, author, image } = req.body;
-  // console.log("Received:", author, image);
+  console.log("Received:", author, image);
   try {
     await sql`
       INSERT INTO posts (content, author_id, image)
@@ -291,11 +291,11 @@ router.post("/AddPosts", async (req, res) => {
 
 router.post("/likePost", async (req, res) => {
   const { postId, userId } = req.body;
-  // console.log("Received:", postId, userId);
+  console.log("Received:", postId, userId);
   try {
     const check =
       await sql`select count(*) from likes where post_id=${postId} and user_id=${userId}`;
-    // console.log(check);
+    console.log(check);
     if (check[0].count > 0) {
       await sql`delete from likes where post_id=${postId} and user_id=${userId}`;
     } else {
@@ -313,11 +313,11 @@ router.post("/likePost", async (req, res) => {
 // check if liked
 router.post("/checkLike", async (req, res) => {
   const { postId, userId } = req.body;
-  // console.log("Received likes:", postId, userId);
+  console.log("Received likes:", postId, userId);
   try {
     const check =
       await sql`select count(*) from likes where post_id=${postId} and user_id=${userId}`;
-    // console.log(check);
+    console.log(check);
     if (check[0].count > 0) {
       // return count
       res.status(200).json({ liked: true });
@@ -340,7 +340,7 @@ router.get("/fetchComments", async (req, res) => {
       WHERE c.post_id = ${postId} AND c.parent_id IS NULL
       ORDER BY c.timestamp ASC
     `;
-    // console.log(comments);
+    console.log(comments);
     // fetch child comments (those with parent_id)
     const replies = await sql`
       SELECT c.id, c.content, c.likes, c.timestamp, c.author_id, 
@@ -400,10 +400,10 @@ router.get("/fetchComments", async (req, res) => {
  * Create a new parent comment.
  * Expects body: { content: string, author: { id: number } }
  */
-router.post("addNewComment", async (req, res) => {
+router.post("/addNewComment", async (req, res) => {
   const { postId, content, author } = req.body;
 
-  console.log("Received:", postId, content, author);
+  // console.log("Received:", postId, content, author);
   try {
     const newComment = await sql`
       INSERT INTO comments (content, author_id, post_id, parent_id)
@@ -432,7 +432,7 @@ router.post("addNewComment", async (req, res) => {
       },
       replies: [],
     };
-    console.log("Comment response:", commentResponse);
+    // console.log("Comment response:", commentResponse);
     res.status(201).json(commentResponse);
   } catch (error) {
     console.error("Error adding comment:", error);
@@ -509,5 +509,76 @@ router.post("/:postId/comments/:commentId/like", async (req, res) => {
     res.status(500).json("Something broke!");
   }
 });
+
+router.post("/payment", async (req, res) => {
+  const { userId, bookId, publisherId } = req.body;
+  console.log("Received:", userId, bookId, publisherId);
+  try {
+    await sql`
+      INSERT INTO transactions (user_id, book_id, publisher_id)
+      VALUES (${userId}, ${bookId}, ${publisherId})
+    `;
+    
+    await sql`
+      DELETE FROM cart
+      WHERE user_id = ${userId} AND book_id = ${bookId} AND publisher_id = ${publisherId}
+    `;
+    res.status(200).json("Payment successful!");
+  } catch (error) {
+    console.error("Error processing payment:", error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+
+// fetch trending books
+router.get("/trendingBooks", async (req, res) => {
+  try {
+    const trendingBooks = await sql`
+      SELECT * FROM books 
+      WHERE rating > 4 AND status = 'approved'
+      ORDER BY rating DESC;
+    `;
+    console.log(trendingBooks);
+    res.status(200).json(trendingBooks);
+  } catch (error) {
+    console.error("Error fetching trending books:", error);
+    res.status(500).json("Something broke!");
+  }
+})
+
+// fetch suggested books
+router.get("/suggestedBooks", async (req, res) => {
+  try {
+    const suggestedBooks = await sql`
+      SELECT * FROM books 
+      WHERE rating > 0 AND status = 'approved'
+      ORDER BY rating DESC;
+    `;
+    console.log(suggestedBooks);
+    res.status(200).json(suggestedBooks);
+  } catch (error) {
+    console.error("Error fetching suggested books:", error);
+    res.status(500).json("Something broke!");
+  }
+})
+
+// search books
+router.get("/search", async (req, res) => {
+  const { query } = req.query;
+  console.log("Received:", query);
+  try {
+    const searchResults = await sql`
+      SELECT * FROM books 
+      WHERE title ILIKE ${"%"+query+"%"} OR author ILIKE ${"%"+query+"%"}
+    `;
+    console.log(searchResults);
+    res.status(200).json(searchResults);
+  } catch (error) {
+    console.error("Error searching books:", error);
+    res.status(500).json("Something broke!");
+  }
+})
+
 
 export default router;

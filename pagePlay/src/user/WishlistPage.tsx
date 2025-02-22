@@ -2,8 +2,8 @@ import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
-import type React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const actualdata = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -15,12 +15,14 @@ interface Book {
   cover_image_url: string;
   price: number;
   cart_id: number;
+  publisher_id: number;
 }
 
 const WishlistPage: React.FC = () => {
   const [wishlistItems, setWishlistItems] = useState<Book[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchWishlist = async () => {
     setLoading(true);
@@ -32,7 +34,6 @@ const WishlistPage: React.FC = () => {
         throw new Error("Failed to fetch wishlist items");
       }
       const data = await response.json();
-      console.log(data);
       setWishlistItems(data);
     } catch (error) {
       console.error("Error fetching wishlist:", error);
@@ -54,12 +55,12 @@ const WishlistPage: React.FC = () => {
   };
 
   const handleSelectItem = (cart_id: number) => {
-    setSelectedItems((prev) => {
-      if (prev.includes(cart_id.toString())) {
-        return prev.filter((id) => id !== cart_id.toString());
-      }
-      return [...prev, cart_id.toString()];
-    });
+    const idStr = cart_id.toString();
+    setSelectedItems((prev) =>
+      prev.includes(idStr)
+        ? prev.filter((id) => id !== idStr)
+        : [...prev, idStr]
+    );
   };
 
   const handleRemoveItem = async (itemId: string) => {
@@ -89,8 +90,8 @@ const WishlistPage: React.FC = () => {
     .filter((item) => selectedItems.includes(item.cart_id.toString()))
     .reduce((sum, item) => sum + Number(item.price), 0);
 
-  // Only apply online fee if at least one item is selected
-  const onlineFee = selectedItems.length > 0 ? 5 : 0;
+  // Online fee is 5 times the number of selected books
+  const onlineFee = selectedItems.length * 5;
   const total = subtotal + onlineFee;
 
   // Skeleton Loader
@@ -193,7 +194,19 @@ const WishlistPage: React.FC = () => {
                   disabled={selectedItems.length === 0}
                   onClick={() => {
                     if (selectedItems.length > 0) {
-                      window.location.href = "/check-out";
+                      const selectedWishlistItems = wishlistItems.filter(
+                        (item) =>
+                          selectedItems.includes(item.cart_id.toString())
+                      );
+                      const bookIds = selectedWishlistItems.map((item) =>
+                        Number(item.id)
+                      );
+                      const publisherIds = selectedWishlistItems.map(
+                        (item) => item.publisher_id
+                      );
+                      navigate("/check-out", {
+                        state: { total, bookIds, publisherIds },
+                      });
                     }
                   }}
                 >
