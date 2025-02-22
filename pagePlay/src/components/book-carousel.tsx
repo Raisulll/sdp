@@ -18,11 +18,11 @@ export function BookCarousel({
   className,
 }: BookCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
+    align: "center", // Center alignment for better spacing
     loop: true,
+    slidesToScroll: 2, // Move 2 books at a time
+    speed: 10, // Reduce transition speed (default is 10)
   });
-
-  console.log("Books:", books);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -46,12 +46,12 @@ export function BookCarousel({
           {books.map((book) => (
             <div
               key={book.id}
-              className="flex-[0_0_100%] min-w-0 pl-4 first:pl-0"
+              className="flex-[0_0_50%] min-w-0 px-2" // Set width to fit two books
             >
               <BookCard
                 book={book}
-                size="large"
-                onClick={() => onBookClick(book.id, book.publisher_id)} // ✅ Pass bookId and publisherId correctly
+                size="medium" // Reduce book card size
+                onClick={() => onBookClick(book.id, book.publisher_id)}
                 coverImage={book.cover_image_url}
               />
             </div>
