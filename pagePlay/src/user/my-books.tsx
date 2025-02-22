@@ -47,12 +47,13 @@ export default function MyBooks() {
       }
     };
     fetchMyBooks();
-  });
+  }, [userId]);
+
   return (
-    <div className="min-h-screen bg-[#E5EADD]">
+    <div className="flex flex-col min-h-screen bg-[#E5EADD]">
       <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="flex-grow max-w-6xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-[#265073]">Booklist</h1>
           <div className="relative w-72">
@@ -64,24 +65,28 @@ export default function MyBooks() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className="group relative aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
-              onClick={() => navigate("/pdf-reader/" + book.id)}
-            >
-              <img
-                src={book.cover_image_url}
-                alt={book.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <p className="text-white font-medium">View Details</p>
+        {books.length === 0 ? (
+          <p className="text-center text-gray-600 mt-8">No books found.</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {books.map((book) => (
+              <div
+                key={book.id}
+                className="group relative aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+                onClick={() => navigate("/pdf-reader/" + book.id)}
+              >
+                <img
+                  src={book.cover_image_url}
+                  alt={book.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <p className="text-white font-medium">View Details</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </main>
       <Footer />
     </div>

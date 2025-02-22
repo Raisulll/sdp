@@ -183,9 +183,9 @@ const Navbar: React.FC = () => {
                     <MenuItem to="/blogs" icon={FileText}>
                       BLOGS
                     </MenuItem>
-                    <MenuItem to="/favourite-books" icon={Bookmark}>
+                    {/* <MenuItem to="/favourite-books" icon={Bookmark}>
                       FAVOURITE BOOKS
-                    </MenuItem>
+                    </MenuItem> */}
                   </>
                 )}
                 {userRole === "publisher" && (

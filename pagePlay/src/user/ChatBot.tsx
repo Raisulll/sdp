@@ -6,6 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
+import { Footer } from "@/components/footer";
+
+
 const API_KEY = import.meta.env.VITE_GEMINI_API;
 
 interface Message {
@@ -227,6 +230,7 @@ export default function ChatBot() {
             </form>
           </Card>
         </div>
+        <Footer />
       </div>
     </>
   );

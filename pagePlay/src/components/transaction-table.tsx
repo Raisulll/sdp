@@ -13,6 +13,22 @@ interface TransactionTableProps {
 }
 
 export function TransactionTable({ transactions }: TransactionTableProps) {
+  console.log("transactions", transactions);
+
+  // Generates a unique transaction id using the transaction id and its timestamp.
+  const generateUniqueTransactionId = (id: string, dateString: string) => {
+    const timestamp = new Date(dateString).getTime();
+    return `${id}-${timestamp}`;
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = date.toLocaleString("en-US", { month: "short" });
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day} ${month}, ${year}`;
+  };
+
   return (
     <div className="rounded-lg border bg-white shadow-sm">
       <Table>
@@ -26,19 +42,23 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell className="font-medium">{transaction.id}</TableCell>
-              <TableCell>{transaction.bookName}</TableCell>
-              <TableCell>{transaction.publisherName}</TableCell>
-              <TableCell>
-                {new Date(transaction.date).toLocaleDateString()}
-              </TableCell>
-              <TableCell className="text-right">
-                ${transaction.amount.toFixed(2)}
-              </TableCell>
-            </TableRow>
-          ))}
+          {transactions.map((transaction) => {
+            const uniqueId = generateUniqueTransactionId(
+              transaction.id,
+              transaction.timestamp
+            );
+            return (
+              <TableRow key={uniqueId}>
+                <TableCell >{uniqueId}</TableCell>
+                <TableCell>{transaction.title}</TableCell>
+                <TableCell>{transaction.name}</TableCell>
+                <TableCell>{formatDate(transaction.timestamp)}</TableCell>
+                <TableCell className="text-right">
+                  ৳{transaction.price}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

@@ -7,6 +7,8 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { useParams } from "react-router-dom";
+import { Footer } from "@/components/footer";
+import { useNavigate } from "react-router-dom";
 
 // Configure worker for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
@@ -36,10 +38,17 @@ export default function PDFReader() {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [zoom, setZoom] = useState(1);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  const user=JSON.parse(localStorage.getItem("user") || "{}");
+  const actualdata = JSON.parse(localStorage.getItem("user") || "{}");
+  const nvaiagte = useNavigate();
+
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        setLoading(true);
         console.log("Fetching book with ID:", bookId);
         const response = await fetch(
           `http://localhost:5000/user/pdfUrl?bookId=${bookId}`
@@ -61,10 +70,33 @@ export default function PDFReader() {
         console.log("Book data:", book);
       } catch (error) {
         console.error("Error fetching book data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchBook();
   }, [bookId]);
+
+  const updateReadingStatus = async()=>{
+    try{
+      const response = await fetch(`http://localhost:5000/user/updateReadingStatus`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: actualdata.userId,
+          bookId: bookId,
+        })
+      })
+      if (!response.ok) {
+        throw new Error("Failed to update reading status");
+      }
+      nvaiagte("/home");
+    } catch (error) {
+      console.error("Error updating reading status:", error);
+    }
+  }
 
   const handleZoomIn = () => setZoom((prev) => Math.min(2, prev + 0.1)); // Max zoom level
   const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.1)); // Min zoom level
@@ -86,13 +118,22 @@ export default function PDFReader() {
     }
   }, [currentPage]);
 
-  if (!book) {
-    return <div>Loading...</div>;
-  }
 
   // if (!book.title || !book.author || !book.pdf_file_url) {
   //   return <div>Error: Invalid book data</div>;
   // }
+
+  // Skeleton Loader
+  const SkeletonLoader = () => (
+    <div className="min-h-screen bg-[#F5F0E8] pt-24 flex justify-center items-center">
+      <div className="animate-pulse space-y-4">
+        <div className="w-64 h-8 bg-gray-300 rounded"></div>
+        <div className="w-96 h-4 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+  );
+
+  if (loading) return <SkeletonLoader />;
 
   return (
     <>
@@ -157,11 +198,10 @@ export default function PDFReader() {
                 <p className="text-gray-600">{book[0].description}</p>
               </div>
               <div className="flex gap-4">
-                <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]">
-                  Currently Reading
-                </Button>
-                <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]">
-                  Finish
+                <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]"
+                  onClick={updateReadingStatus}
+                >
+                  Finished Reading
                 </Button>
               </div>
             </div>
@@ -227,6 +267,7 @@ export default function PDFReader() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );

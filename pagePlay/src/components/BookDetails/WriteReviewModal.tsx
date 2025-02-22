@@ -62,6 +62,8 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
     setReview
       ("");
     onClose();
+    //refresh thee page
+    window.location.reload();
   };
 
   return (

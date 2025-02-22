@@ -10,6 +10,7 @@ import arif from "../assets/arif.jpg";
 import anika from "../assets/Anika.jpg";
 import surjo from "../assets/Kabbo.jpg";
 import foisal from "../assets/foisal.jpg";
+import { Footer } from "@/components/footer";
 
 interface TeamMember {
   name: string;
@@ -157,6 +158,7 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

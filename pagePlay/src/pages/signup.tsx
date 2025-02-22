@@ -243,13 +243,15 @@ export default function Signup() {
                   <Input
                   type="date"
                   name="dateOfBirth"
-                  className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[30px] sm:pl-[29px] text-sm sm:text-lg font-medium border-[#265073] focus-visible:ring-[#265073] outline-none"
+                  placeholder="Pick your date of birth"
+                  className="w-full h-[40px] sm:h-[60px] bg-white rounded-[13px] pl-[60px] sm:pl-[81px] text-sm sm:text-lg font-medium border-[#265073] focus-visible:ring-[#265073] outline-none"
                   value={formData.dateOfBirth}
                   onChange={handleChange}
                   required
                   />
+                  <CalendarIcon className="absolute left-7 top-1/2 -translate-y-1/2 w-[20px] h-[20px] text-gray-500" />
                 </div>
-                {/* </div> */}
+
 
                 {/* Password Fields */}
                 <div className="relative">

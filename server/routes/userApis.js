@@ -644,4 +644,75 @@ router.get("/myBooks", async (req, res) => {
 });
 
 
+// user transaction history
+router.get("/transactions", async (req, res) => {
+  const { userId } = req.query;
+  console.log("Received:", userId);
+  try {
+    const transactions = await sql`
+      select t.id, t.timestamp, b.title, b.price, p.name from transactions t, books b , publisher p
+      where t.book_id = b.id and t.user_id = ${userId} and t.publisher_id = p.id
+    `;
+    console.log(transactions);
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+// a book is perchased or not
+router.get("/isPurchased", async (req, res) => {
+  const { userId, bookId } = req.query;
+  console.log("Received:", userId, bookId);
+  try {
+    const purchased = await sql`
+      select count(*) from purchased_books where user_id=${userId} and book_id=${bookId}
+    `;
+    console.log(purchased);
+    if (purchased[0].count > 0) {
+      res.status(200).json({ purchased: true });
+    } else {
+      res.status(200).json({ purchased: false });
+    }
+  } catch (error) {
+    console.error("Error fetching purchased books:", error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+// update readin status for book
+router.post("/updateReadingStatus", async (req, res) => {
+  const {userId, bookId} = req.body;
+  console.log("Received:", userId, bookId);
+  try {
+    await sql`
+     update purchased_books set status = 'completed' where user_id=${userId} and book_id=${bookId}
+    `;
+    res.status(200).json("Reading status updated successfully!");
+  } catch (error) {
+    console.error("Error updating reading status:", error);
+    res.status(500).json("Something broke!");
+  }
+})
+
+// profile remaining
+router.get("/profileRemaining", async(req, res)=>{
+  const {userId} = req.query;
+  console.log( "Received femaining :", userId);
+  try{
+    const profileRemaining = await sql`
+      select b.genre, p.status, count(*) from books b, purchased_books p
+      where b.id = p.book_id and p.user_id = ${userId}
+    `;
+    console.log("Profile remaining:", profileRemaining);
+    res.status(200).json(profileRemaining);
+  }
+  catch(error){
+    console.error("Error fetching profile remaining:", error);
+    res.status(500).json("Something broke!");
+  }
+})
+
+
 export default router;

@@ -3,11 +3,13 @@ import { PostCard } from "@/components/blog/post-card";
 import Navbar from "@/components/navbar";
 import type { Post } from "@/types/blog";
 import { useEffect, useState } from "react";
+import { Footer } from "@/components/footer";
 
 export default function BlogFeed() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any[]>([]);
+  const [secondLoader, setSecondLoader] = useState(true);
 
   // Get user info from localStorage
   const localdata = localStorage.getItem("user");
@@ -44,6 +46,7 @@ export default function BlogFeed() {
     if (!user || user.length === 0) return;
     const fetchPosts = async () => {
       try {
+        setSecondLoader(true);
         const response = await fetch(`http://localhost:5000/user/fetchPosts`);
         if (!response.ok) throw new Error("Failed to fetch posts");
         const postsData = await response.json();
@@ -80,6 +83,8 @@ export default function BlogFeed() {
         setPosts(postsWithComments);
       } catch (error) {
         console.error("Error fetching posts:", error);
+      } finally {
+        setSecondLoader(false);
       }
     };
     fetchPosts();
@@ -114,7 +119,7 @@ export default function BlogFeed() {
     </div>
   );
 
-  if (!user || user.length === 0) return <SkeletonLoader />;
+  if (!user || user.length === 0|| loading || secondLoader) return <SkeletonLoader />;
 
   const currentUser = {
     id: user[0].id,
@@ -271,6 +276,7 @@ export default function BlogFeed() {
           ))}
         </div>
       </main>
+      <Footer/>
     </div>
   );
 }

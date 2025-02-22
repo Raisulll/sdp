@@ -87,6 +87,7 @@ const BookDetails: React.FC = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [purchased, setPurchased] = useState(false);
 
   const localdata = localStorage.getItem("user");
   const actualdata = localdata ? JSON.parse(localdata) : null;
@@ -178,27 +179,30 @@ const BookDetails: React.FC = () => {
     fetchReviews();
   }, [fetchReviews]);
 
-  // Fetch Rating
-  const fetchRating = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/user/rating?bookId=${bookId}&publisherId=${publisherId}`
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch rating: ${response.statusText}`);
-      }
-      const data = await response.json();
-      setBook((prev) =>
-        prev ? [{ ...prev[0], rating: data.rating }, ...prev.slice(1)] : prev
-      );
-    } catch (err) {
-      console.error("Error fetching rating:", err);
-    }
-  }, [bookId, publisherId]);
 
-  useEffect(() => {
-    fetchRating();
-  }, [fetchRating]);
+// useEffect(() => {
+//   const fetchRating = async () => {
+//     try {
+//       const response = await fetch(
+//         `http://localhost:5000/user/rating?bookId=${bookId}&publisherId=${publisherId}`
+//       );
+//       if (!response.ok) {
+//         throw new Error(`Failed to fetch rating: ${response.statusText}`);
+//       }
+//       const data = await response.json();
+//       // If the API returns a number directly, use it;
+//       // otherwise, assume it returns an object with a 'rating' property.
+//       const newRating = typeof data === "number" ? data : data.rating;
+//       setBook((prev) =>
+//         prev ? [{ ...prev[0], rating: newRating }, ...prev.slice(1)] : prev
+//       );
+//     } catch (err) {
+//       console.error("Error fetching rating:", err);
+//     }
+//   };
+//   fetchRating();
+// }, [bookId, publisherId]);
+
 
   // Updated: Ensure we have a valid publisher ID.
   const getPublisherId = (): number | null => {
@@ -209,6 +213,27 @@ const BookDetails: React.FC = () => {
     }
     return null;
   };
+
+  useEffect(()=>{
+    const fetchPurchased = async () => {
+      console.log("Fetching purchased books");
+      try {
+        const response = await fetch(
+          `http://localhost:5000/user/isPurchased?userId=${actualdata.userId}&bookId=${bookId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch purchased books");
+        }
+        const data = await response.json();
+        console.log(data);
+        setPurchased(data.purchased);
+        console.log(purchased);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPurchased();
+  },[bookId, actualdata.userId]);
 
   const handleBuyNow = async () => {
     const validPublisherId = getPublisherId();
@@ -277,6 +302,8 @@ const BookDetails: React.FC = () => {
     }
   };
 
+
+
   // Reviews and rating distribution computations…
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 2);
   const totalReviewCount = reviews.length;
@@ -339,21 +366,35 @@ const BookDetails: React.FC = () => {
               <div className="text-2xl font-bold text-center text-[#265073]">
                 ${book[0].price}
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Button
-                  onClick={handleBuyNow}
-                  className="w-full bg-[#265073] hover:bg-[#265073]/90"
-                >
-                  Buy Now
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleAddToCart}
-                >
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Add to Cart
-                </Button>
+              <div className="grid  gap-4">
+                {purchased ? (
+                    <div className="flex justify-center">
+                    <Button
+                      // on click navigate to the pdf reader / book id 
+                      onClick={() => navigate(`/pdf-reader/${bookId}`)}
+                      className="justify-center bg-[#265073] hover:bg-[#265073]/90"
+                    >
+                      Open Book
+                    </Button>
+                    </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      onClick={handleBuyNow}
+                      className="w-full bg-[#265073] hover:bg-[#265073]/90"
+                    >
+                      Buy Now
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleAddToCart}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
