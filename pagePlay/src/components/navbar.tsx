@@ -68,6 +68,7 @@ const Navbar: React.FC = () => {
             window.location.pathname === "/contact" ||
             window.location.pathname === "/check-out" ||
             window.location.pathname === "/chat-bot" ||
+            window.location.pathname === "/submit-poster" ||
             window.location.pathname === "/favourite-books" ? (
               <>
                 <NavLink to="/home" isActive={location.pathname === "/home"}>

@@ -179,9 +179,11 @@ const HomePage: FC = () => {
               </section>
             </div>
 
-            {/* Right Sidebar */}
-            <div>
-              <WelcomeCard year={2024} />
+            {/* Right Sidebar (Sticky) */}
+            <div className="relative">
+              <div className="sticky top-24">
+                <WelcomeCard year={2024} />
+              </div>
             </div>
           </div>
         )}
