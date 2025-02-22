@@ -5,8 +5,30 @@ import { FaCcMastercard } from "react-icons/fa";
 import Navbar from "@/components/navbar";
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const CheckoutPage: React.FC = () => {
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const fetchName = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/user/fetchname?userId=${user.userId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const data = await response.json();
+        console.log("User data:", data);
+        setName(data[0].firstname);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchName();
+  });
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const stateData =
@@ -29,7 +51,7 @@ const CheckoutPage: React.FC = () => {
 
   // Default dummy data for card details.
   const [formData, setFormData] = useState({
-    cardholderName: "Anika Tasnim",
+    cardholderName: "Sabbir Hossain",
     cardNumber: "1234 5678 1234 5678",
     expiry: "12/25",
     cvc: "123",

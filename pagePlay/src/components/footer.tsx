@@ -5,9 +5,15 @@ import type { FC } from "react"
 interface FooterProps {
   socialLinks?: SocialLinks
 }
+const socialLinks = {
+  twitter: undefined,
+  facebook: "https://facebook.com/pageplay",
+  instagram: "https://instagram.com/pageplay",
+  github: "https://github.com/pageplay",
+  linkedin: undefined,
+};
 
-
-export const Footer: FC<FooterProps> = ({ socialLinks }) => {
+export const Footer: FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
 
   return (

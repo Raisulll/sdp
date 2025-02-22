@@ -9,13 +9,6 @@ import { Search } from "lucide-react";
 import { useState, type FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const socialLinks = {
-  twitter: undefined,
-  facebook: "https://facebook.com/pageplay",
-  instagram: "https://instagram.com/pageplay",
-  github: "https://github.com/pageplay",
-  linkedin: undefined,
-};
 
 const transformBookData = (book: any) => ({
   ...book,
@@ -27,6 +20,7 @@ const HomePage: FC = () => {
   const [trendingBooks, setTrendingBooks] = useState([]);
   const [suggestedBooks, setSuggestedBooks] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -76,9 +70,10 @@ const HomePage: FC = () => {
     fetchSuggestedBooks();
   }, []);
 
-  // Handle the search input change event.
+  // Handle search input change event.
   const handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
+    setSearchTerm(query);
     if (query.trim() === "") {
       setSearchResults([]);
       return;
@@ -97,6 +92,18 @@ const HomePage: FC = () => {
     }
   };
 
+  // Skeleton Loader Component
+  const SkeletonLoader = () => (
+    <div className="min-h-screen bg-[#F5F0E8] pt-24 flex justify-center items-center">
+      <div className="animate-pulse space-y-4">
+        <div className="w-64 h-8 bg-gray-300 rounded"></div>
+        <div className="w-96 h-4 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+  );
+
+  if (loading) return <SkeletonLoader />;
+
   return (
     <div className="min-h-screen bg-[#E5EADD]">
       <Navbar />
@@ -110,26 +117,31 @@ const HomePage: FC = () => {
               type="search"
               placeholder="Search Your Books"
               className="pl-10 py-6 text-lg border-[#265073] focus-visible:ring-[#265073]"
+              value={searchTerm}
               onChange={handleSearch}
             />
           </div>
         </div>
 
-        {/* If search results exist, show them; otherwise show the main content */}
-        {searchResults.length > 0 ? (
-          <section>
+        {/* Conditionally render search results or default home page */}
+        {searchTerm.trim() !== "" ? (
+          <section className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-[#265073] mb-6">
               Search Results
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {searchResults.map((book: any) => (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  onClick={() => handleBookClick(book.id, book.publisherId)}
-                  coverImage={book.coverImage}
-                />
-              ))}
+              {searchResults.length > 0 ? (
+                searchResults.map((book: any) => (
+                  <BookCard
+                    key={book.id}
+                    book={book}
+                    onClick={() => handleBookClick(book.id, book.publisherId)}
+                    coverImage={book.coverImage}
+                  />
+                ))
+              ) : (
+                <p>No results found for "{searchTerm}"</p>
+              )}
             </div>
           </section>
         ) : (
@@ -143,7 +155,7 @@ const HomePage: FC = () => {
                   completed: 0,
                   currentlyReading: 0,
                 }}
-                socialLinks={socialLinks}
+                
               />
             </div>
 
@@ -189,7 +201,7 @@ const HomePage: FC = () => {
         )}
       </main>
 
-      <Footer socialLinks={socialLinks} />
+      <Footer  />
     </div>
   );
 };

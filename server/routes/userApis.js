@@ -535,6 +535,7 @@ router.post("/:postId/comments/:commentId/like", async (req, res) => {
   }
 });
 
+// payment api for user
 router.post("/payment", async (req, res) => {
   const { userId, bookId, publisherId } = req.body;
   console.log("Received:", userId, bookId, publisherId);
@@ -543,6 +544,10 @@ router.post("/payment", async (req, res) => {
       INSERT INTO transactions (user_id, book_id, publisher_id)
       VALUES (${userId}, ${bookId}, ${publisherId})
     `;
+
+    await sql`
+      insert into purchased_books (user_id, book_id, publisher_id)
+      values (${userId}, ${bookId}, ${publisherId})`
     
     await sql`
       DELETE FROM cart
@@ -604,6 +609,39 @@ router.get("/search", async (req, res) => {
     res.status(500).json("Something broke!");
   }
 })
+
+//fetch user name
+router.get("/fetchname", async (req, res) => {
+  const { userId } = req.query;
+  console.log("Received:", userId);
+  try {
+    const name = await sql`
+      SELECT firstname, lastname FROM users WHERE id = ${userId}
+    `;
+    console.log(name);
+    res.status(200).json(name);
+  } catch (error) {
+    console.error("Error fetching name:", error);
+    res.status(500).json("Something broke!");
+  }
+});
+
+// fetch my books
+router.get("/myBooks", async (req, res) => {
+  const { userId } = req.query;
+  console.log("Received:", userId);
+  try {
+    const myBooks = await sql`
+      select b.id, b.title, b.publisher_id,b.cover_image_url from books b, purchased_books p 
+      where b.id = p.book_id and p.user_id = ${userId}
+    `;
+    console.log(myBooks);
+    res.status(200).json(myBooks);
+  } catch (error) {
+    console.error("Error fetching my books:", error);
+    res.status(500).json("Something broke!");
+  }
+});
 
 
 export default router;

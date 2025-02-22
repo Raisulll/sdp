@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/footer";
 import { Card } from "@/components/ui/card";
 import {
   Dialog,
@@ -457,6 +458,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </Card>
       </main>
+      <Footer />
     </div>
   );
 };

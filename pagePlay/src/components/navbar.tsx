@@ -96,12 +96,12 @@ const Navbar: React.FC = () => {
                 >
                   Favourite Books
                 </NavLink> */}
-                <NavLink
+                {/* <NavLink
                   to="/contact"
                   isActive={location.pathname === "/contact"}
                 >
                   Contact us
-                </NavLink>
+                </NavLink> */}
                 <NavLink
                   to="/user-profile"
                   isActive={location.pathname === "/user-profile"}
