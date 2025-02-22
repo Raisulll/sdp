@@ -27,7 +27,8 @@ import WishlistPage from "./user/WishlistPage";
 import AddAdmin from "./admin/AddAdmin";
 import AddPublisher from "./admin/AddPublisher";
 import SubmitPoster from "./components/submit-posters";
-
+import PublisherPdfReader from "./publisher/publisherPdfReadere";
+import AdminPdfReader from "./admin/adminPdfReader";
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
         path="/publisher-transactions"
         element={<PublisherTransactions />}
       />
+      <Route path="/publisher-pdf-reader/:bookId" element={<PublisherPdfReader />} />
 
       {/* admin */}
       
@@ -71,6 +73,8 @@ function App() {
       <Route path="/admin/pending-books" element={<PendingBooks />} />
       <Route path="/admin/Add-Admin" element={<AddAdmin />} />
       <Route path="/admin/Add-Publishers" element={<AddPublisher />} />
+      <Route path="/admin-pdf-reader/:bookId" element={<AdminPdfReader />} />
+
       
     </Routes>
   );

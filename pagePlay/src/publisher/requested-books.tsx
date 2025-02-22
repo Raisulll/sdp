@@ -239,7 +239,9 @@ export default function RequestedBooks() {
                       <div>
                         <h2
                           className="text-xl font-bold text-[#265073] mb-1 cursor-pointer"
-                          onClick={() => window.location.href = `/pdf-reader/${book.id}`}
+                          onClick={() =>
+                            (window.location.href = `/publisher-pdf-reader/${book.id}`)
+                          }
                         >
                           {book.title}
                         </h2>

@@ -210,20 +210,22 @@ export default function BookList() {
           {/* Books Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {books.map((book) => (
-                  <div
-                  key={book.id}
-                  className="group relative aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
-                  onClick={() => window.location.href = `/pdf-reader/${book.id}`}
-                  >
-                  <img
-                    src={book.cover_image_url}
-                    alt={book.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <p className="text-white font-medium">View Details</p>
-                  </div>
-                  </div>
+              <div
+                key={book.id}
+                className="group relative aspect-[3/4] bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+                onClick={() =>
+                  (window.location.href = `/publisher-pdf-reader/${book.id}`)
+                }
+              >
+                <img
+                  src={book.cover_image_url}
+                  alt={book.title}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <p className="text-white font-medium">View Details</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>

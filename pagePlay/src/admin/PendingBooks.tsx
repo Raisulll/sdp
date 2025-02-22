@@ -109,7 +109,12 @@ const PendingBooks = () => {
 
               {/* Book Details */}
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-[#265073]">
+                <h2
+                  className="text-xl font-bold text-[#265073]"
+                  onClick={() =>
+                    (window.location.href = `/admin-pdf-reader/${book.id}`)
+                  }
+                >
                   {book.title}
                 </h2>
                 <p className="text-gray-600">Author: {book.author}</p>

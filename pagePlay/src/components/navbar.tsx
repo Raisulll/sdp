@@ -115,6 +115,7 @@ const Navbar: React.FC = () => {
             {window.location.pathname === "/publisher-profile" ||
             window.location.pathname === "/book-list" ||
             window.location.pathname === "/requested-books" ||
+            window.location.pathname.includes("/publisher-pdf-reader") ||
             window.location.pathname.includes("/publisher-transactions") ? (
               <>
                 <NavLink
