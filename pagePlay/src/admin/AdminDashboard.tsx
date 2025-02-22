@@ -24,16 +24,16 @@ const AdminDashboard = () => {
 
       if (publisherError) throw new Error(publisherError.message);
 
-      // Fetch total transactions sum where status = 'Completed'
-      const { data: transactionData, error: transactionError } = await supabase
-        .from("transactions")
-        .select("amount")
-        .eq("status", "Completed");
+    // Fetch total count of transactions where status = 'Completed'
+const { count, error: transactionError } = await supabase
+.from("transactions")
+.select("*", { count: "exact", head: true })
 
-      if (transactionError) throw new Error(transactionError.message);
+if (transactionError) throw new Error(transactionError.message);
 
-      // Sum all transaction amounts
-      const transactionSum = transactionData?.reduce((sum, txn) => sum + txn.amount, 0) || 0;
+// Calculate transaction sum as total count * 5
+const transactionSum = (count || 0) * 5;
+
        // Fetch pending books count
        const { count: pendingBooksTotal, error: pendingBooksError } = await supabase
        .from("books")
@@ -138,8 +138,8 @@ const AdminDashboard = () => {
 
           <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-[#265073]">Transactions</h2>
-              <p className="text-gray-600">Total transactions processed</p>
+              <h2 className="text-xl font-semibold text-[#265073]">Transactions Profit</h2>
+              <p className="text-gray-600">Total transactions Profit </p>
             </div>
             <div>
               <h3 className="text-3xl font-bold text-[#265073]">
