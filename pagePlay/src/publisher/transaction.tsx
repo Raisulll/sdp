@@ -75,7 +75,7 @@ export default function TransactionPage() {
     <div className="min-h-screen bg-[#FEFFF0]">
       <Navbar />
 
-      <main className="container mx-auto px-4 pt-24 pb-8">
+      <main className="container mx-auto px-12 md:px-24 lg:px-32 py-20">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <img
@@ -93,13 +93,13 @@ export default function TransactionPage() {
             </div>
           </div>
 
-          <div className="relative w-72">
+          {/* <div className="relative w-72">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
             <Input
               placeholder="Search transactions..."
               className="pl-10 border-[#265073] focus-visible:ring-[#265073]"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Statistics Cards */}
