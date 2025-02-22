@@ -29,21 +29,25 @@ export interface Book {
   total_reviews: number;
   pages: number;
   pdf_file_url: string;
+  audio_url?: string;
 }
 
 export default function PDFReader() {
   const { bookId } = useParams<{ bookId: string }>();
-  const [book, setBook] = useState<Book | null>(null);
+  const [book, setBook] = useState<Book[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [zoom, setZoom] = useState(1);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
 
-  const user=JSON.parse(localStorage.getItem("user") || "{}");
-  const actualdata = JSON.parse(localStorage.getItem("user") || "{}");
-  const nvaiagte = useNavigate();
+  // Audio state and ref for streaming
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const actualdata = JSON.parse(localStorage.getItem("user") || "{}");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -67,7 +71,7 @@ export default function PDFReader() {
           });
         });
         setBook(data);
-        console.log("Book data:", book);
+        console.log("Book data:", data);
       } catch (error) {
         console.error("Error fetching book data:", error);
       } finally {
@@ -76,35 +80,6 @@ export default function PDFReader() {
     };
     fetchBook();
   }, [bookId]);
-
-  const updateReadingStatus = async()=>{
-    try{
-      const response = await fetch(`http://localhost:5000/user/updateReadingStatus`,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: actualdata.userId,
-          bookId: bookId,
-        })
-      })
-      if (!response.ok) {
-        throw new Error("Failed to update reading status");
-      }
-      nvaiagte("/home");
-    } catch (error) {
-      console.error("Error updating reading status:", error);
-    }
-  }
-
-  const handleZoomIn = () => setZoom((prev) => Math.min(2, prev + 0.1)); // Max zoom level
-  const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.1)); // Min zoom level
-
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    console.log("Number of pages in PDF:", numPages);
-    setNumPages(numPages);
-  };
 
   useEffect(() => {
     if (sidebarRef.current) {
@@ -118,10 +93,58 @@ export default function PDFReader() {
     }
   }, [currentPage]);
 
+  // Set up an onended handler to reset audio state when playback finishes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.onended = () => {
+        setIsAudioPlaying(false);
+      };
+    }
+  }, []);
 
-  // if (!book.title || !book.author || !book.pdf_file_url) {
-  //   return <div>Error: Invalid book data</div>;
-  // }
+  const handleToggleAudio = () => {
+    if (audioRef.current) {
+      if (isAudioPlaying) {
+        audioRef.current.pause();
+        setIsAudioPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsAudioPlaying(true);
+      }
+    }
+  };
+
+  const updateReadingStatus = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/updateReadingStatus`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: actualdata.userId,
+            bookId: bookId,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update reading status");
+      }
+      navigate("/home");
+    } catch (error) {
+      console.error("Error updating reading status:", error);
+    }
+  };
+
+  const handleZoomIn = () => setZoom((prev) => Math.min(2, prev + 0.1)); // Max zoom level
+  const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.1)); // Min zoom level
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    console.log("Number of pages in PDF:", numPages);
+    setNumPages(numPages);
+  };
 
   // Skeleton Loader
   const SkeletonLoader = () => (
@@ -134,6 +157,7 @@ export default function PDFReader() {
   );
 
   if (loading) return <SkeletonLoader />;
+  if (!book) return <div>Error: Book not found</div>;
 
   return (
     <>
@@ -198,7 +222,8 @@ export default function PDFReader() {
                 <p className="text-gray-600">{book[0].description}</p>
               </div>
               <div className="flex gap-4">
-                <Button className="bg-[#265073] text-white hover:bg-[#1a3b5c]"
+                <Button
+                  className="bg-[#265073] text-white hover:bg-[#1a3b5c]"
                   onClick={updateReadingStatus}
                 >
                   Finished Reading
@@ -234,8 +259,8 @@ export default function PDFReader() {
                 onPageChange={setCurrentPage}
                 onZoomIn={handleZoomIn}
                 onZoomOut={handleZoomOut}
-                onToggleAudio={() => {}}
-                isAudioPlaying={false}
+                onToggleAudio={handleToggleAudio}
+                isAudioPlaying={isAudioPlaying}
               />
               <div
                 className="overflow-auto"
@@ -266,6 +291,10 @@ export default function PDFReader() {
               </div>
             </div>
           </div>
+          {/* Hidden audio element for streaming */}
+          {book[0].audio_url && (
+            <audio ref={audioRef} src={book[0].audio_url} />
+          )}
         </main>
         <Footer />
       </div>
