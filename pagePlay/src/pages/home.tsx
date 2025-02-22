@@ -1,14 +1,15 @@
-import { BookCard } from "@/components/book-card";
-import { BookCarousel } from "@/components/book-carousel";
-import { Footer } from "@/components/footer";
-import Navbar from "@/components/navbar";
-import { ReadingChallenge } from "@/components/reading-challenge";
-import { Input } from "@/components/ui/input";
-import { WelcomeCard } from "@/components/welcome-card";
-import { suggestedBooks, trendingBooks } from "@/data/books";
-import { Search } from "lucide-react";
-import { type FC } from "react";
-import { useNavigate } from "react-router-dom";
+import type React from "react"
+import { BookCard } from "@/components/book-card"
+import { BookCarousel } from "@/components/book-carousel"
+import { Footer } from "@/components/footer"
+import Navbar from "@/components/navbar"
+import { ReadingChallenge } from "@/components/reading-challenge"
+import { Input } from "@/components/ui/input"
+import { WelcomeCard } from "@/components/welcome-card"
+import { suggestedBooks, trendingBooks } from "@/data/books"
+import { Search } from "lucide-react"
+import type { FC } from "react"
+import { useNavigate } from "react-router-dom"
 
 const socialLinks = {
   twitter: undefined,
@@ -16,19 +17,18 @@ const socialLinks = {
   instagram: "https://instagram.com/pageplay",
   github: "https://github.com/pageplay",
   linkedin: undefined,
-};
+}
 
 const HomePage: FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleBookClick = () => {
-    navigate(`/book-details/24/1`);
-  };
+    navigate(`/book-details/24/1`)
+  }
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Handle search
-    console.log("Searching:", event.target.value);
-  };
+    console.log("Searching:", event.target.value)
+  }
 
   return (
     <div className="min-h-screen bg-[#E5EADD]">
@@ -49,62 +49,46 @@ const HomePage: FC = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-8">
-          {/* Left Sidebar */}
-          <div>
-            <ReadingChallenge
-              targetBooks={12}
-              currentStats={{
-                wantToRead: 0,
-                completed: 0,
-                currentlyReading: 0,
-              }}
-              socialLinks={socialLinks}
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-8">
+          {/* Left Sidebar (Sticky) */}
+          <div className="relative">
+            <div className="sticky top-24">
+              <ReadingChallenge socialLinks={socialLinks} />
+            </div>
           </div>
 
-          {/* Main Content */}
-          <div className="space-y-12">
+          {/* Main Content (Scrollable) */}
+          <div className="space-y-12 min-h-[200vh]">
             {/* Trending Books */}
             <section>
-              <h2 className="text-2xl font-bold text-[#265073] mb-6">
-                Trending Books
-              </h2>
-              <BookCarousel
-                books={trendingBooks}
-                onBookClick={handleBookClick}
-                className="mb-6"
-              />
+              <h2 className="text-2xl font-bold text-[#265073] mb-6">Trending Books</h2>
+              <BookCarousel books={trendingBooks} onBookClick={handleBookClick} className="mb-6" />
             </section>
 
             {/* Suggestions */}
             <section>
-              <h2 className="text-2xl font-bold text-[#265073] mb-6">
-                Suggestions
-              </h2>
+              <h2 className="text-2xl font-bold text-[#265073] mb-6">Suggestions</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {suggestedBooks.map((book) => (
-                  <BookCard
-                    key={book.id}
-                    book={book}
-                    onClick={handleBookClick}
-                    coverImage={book.coverImage}
-                  />
+                  <BookCard key={book.id} book={book} onClick={handleBookClick} coverImage={book.coverImage} />
                 ))}
               </div>
             </section>
           </div>
 
-          {/* Right Sidebar */}
-          <div>
-            <WelcomeCard year={2024} />
+          {/* Right Sidebar (Sticky) */}
+          <div className="relative">
+            <div className="sticky top-24">
+              <WelcomeCard year={2024} />
+            </div>
           </div>
         </div>
       </main>
 
       <Footer socialLinks={socialLinks} />
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage
+

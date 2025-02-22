@@ -3,6 +3,31 @@ import sql from "../db.js";
 
 const router = express.Router();
 
+//Add poster submission API
+router.post("/submitPoster", async (req, res) => {
+  const { title, description, designerName, email, imageUrl } = req.body;
+
+  // Validate input
+  if (!title || !description || !designerName || !email || !imageUrl) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const result = await sql`
+      INSERT INTO poster_submissions (title, description, designer_name, email, image_url)
+      VALUES (${title}, ${description}, ${designerName}, ${email}, ${imageUrl})
+      RETURNING *;
+    `;
+
+    res.status(201).json({ message: "Poster submitted successfully!", poster: result[0] });
+  } catch (error) {
+    console.error("Error submitting poster:", error);
+    res.status(500).json({ error: "Something went wrong!" });
+  }
+});
+
+
+
 // View profile info API for user
 router.get("/profileInfo", async (req, res) => {
   const { userId } = req.query;

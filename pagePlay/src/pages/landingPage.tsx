@@ -105,9 +105,11 @@ export default function LandingPage() {
                 favorite PDF books online!
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+              <Link to="/login">
                 <Button size="lg" className="bg-[#5D4E96] text-white hover:bg-[#4A3D7D]">
-                  Browse Library
+                  Get Started
                 </Button>
+                </Link>
               </div>
             </div>
             <div className="flex items-center justify-center mt-8 lg:mt-0">

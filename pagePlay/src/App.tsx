@@ -26,6 +26,7 @@ import UserProfile from "./user/profile";
 import WishlistPage from "./user/WishlistPage";
 import AddAdmin from "./admin/AddAdmin";
 import AddPublisher from "./admin/AddPublisher";
+import SubmitPoster from "./components/submit-posters";
 
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
       <Route path="/pdf-reader/:bookId" element={<PDFReader />} />
       <Route path="/favourite-books" element={<FavouriteBooks />} />
       <Route path="/chat-bot" element={<ChatBot />} />
+      <Route path="/submit-poster" element={<SubmitPoster />} />
 
       {/* publisher */}
       <Route path="/publisher-profile" element={<PublisherProfile />} />
