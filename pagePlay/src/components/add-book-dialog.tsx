@@ -58,6 +58,7 @@ export function AddBookDialog({ onClose }: AddBookDialogProps) {
   const [bookTitle, setBookTitle] = useState("");
   const [publicationDate, setPublicationDate] = useState("");
   const [isbn, setIsbn] = useState("");
+  const [price, setPrice] = useState("");
   const [genre, setGenre] = useState("");
   const [description, setDescription] = useState("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -129,6 +130,7 @@ export function AddBookDialog({ onClose }: AddBookDialogProps) {
       bookTitle: bookTitle,
       publicationDate: publicationDate,
       isbn: isbn,
+      price: price,
       genre: genre,
       description: description,
       publisherId: publisherId,
@@ -241,6 +243,21 @@ export function AddBookDialog({ onClose }: AddBookDialogProps) {
               className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
               value={isbn}
               onChange={(e) => setIsbn(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* add price filed */}
+          <div className="relative">
+            <label className="text-sm font-medium text-[#265073] flex items-center gap-2">
+              <Bookmark className="h-4 w-4" />
+              Price
+            </label>
+            <Input
+              placeholder="Enter Price"
+              className="mt-2 border-[#265073] focus-visible:ring-[#265073]"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
               required
             />
           </div>
