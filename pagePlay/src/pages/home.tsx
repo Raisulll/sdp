@@ -33,9 +33,7 @@ const HomePage: FC = () => {
     const fetchTrendingBooks = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://localhost:5000/user/trendingBooks"
-        );
+        const response = await fetch("http://localhost:5000/user/trendingBooks");
         if (!response.ok) {
           throw new Error("Failed to fetch trending books");
         }
@@ -54,9 +52,7 @@ const HomePage: FC = () => {
   useEffect(() => {
     const fetchSuggestedBooks = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/user/suggestedBooks"
-        );
+        const response = await fetch("http://localhost:5000/user/suggestedBooks");
         if (!response.ok) {
           throw new Error("Failed to fetch suggested books");
         }
@@ -146,8 +142,8 @@ const HomePage: FC = () => {
           </section>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-8">
-            {/* Left Sidebar */}
-            <div>
+            {/* Left Sidebar (Static) */}
+            <div className="sticky top-24">
               <ReadingChallenge
                 targetBooks={12}
                 currentStats={{
@@ -159,13 +155,11 @@ const HomePage: FC = () => {
               />
             </div>
 
-            {/* Main Content */}
-            <div className="space-y-12">
+            {/* Middle Content (Scrollable) */}
+            <div className="space-y-12 overflow-y-auto max-h-[calc(100vh-120px)] px-4">
               {/* Trending Books Section */}
               <section>
-                <h2 className="text-2xl font-bold text-[#265073] mb-6">
-                  Trending Books
-                </h2>
+                <h2 className="text-2xl font-bold text-[#265073] mb-6">Trending Books</h2>
                 <BookCarousel
                   books={trendingBooks}
                   onBookClick={handleBookClick}
@@ -175,9 +169,7 @@ const HomePage: FC = () => {
 
               {/* Suggestions Section */}
               <section>
-                <h2 className="text-2xl font-bold text-[#265073] mb-6">
-                  Suggestions
-                </h2>
+                <h2 className="text-2xl font-bold text-[#265073] mb-6">Suggestions</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {suggestedBooks.map((book: any) => (
                     <BookCard
@@ -191,11 +183,9 @@ const HomePage: FC = () => {
               </section>
             </div>
 
-            {/* Right Sidebar (Sticky) */}
-            <div className="relative">
-              <div className="sticky top-24">
-                <WelcomeCard year={2024} />
-              </div>
+            {/* Right Sidebar (Static) */}
+            <div className="sticky top-24">
+              <WelcomeCard year={2024} />
             </div>
           </div>
         )}
