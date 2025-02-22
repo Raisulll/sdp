@@ -12,7 +12,7 @@ import {
   Bookmark,
   BookOpen,
   FileText,
-  Heart,
+  ShoppingCart,
   LogOut,
   User,
 } from "lucide-react";
@@ -68,50 +68,46 @@ const Navbar: React.FC = () => {
             window.location.pathname === "/contact" ||
             window.location.pathname === "/check-out" ||
             window.location.pathname === "/chat-bot" ||
+            window.location.pathname === "/submit-poster" ||
             window.location.pathname === "/favourite-books" ? (
               <>
-              <NavLink to="/home" isActive={location.pathname === "/home"}>
-                Home
-              </NavLink>
-              <NavLink
-                to="/my-books"
-                isActive={location.pathname === "/my-books"}
-              >
-                My Books
-              </NavLink>
-              <NavLink
-                to="/chat-bot"
-                isActive={location.pathname === "/chat-bot"}
-              >
-                Chatbot
-              </NavLink>
-              <NavLink
-                to="/cart"
-                isActive={location.pathname === "/cart"}
-              >
-                Cart
-              </NavLink>
-              <NavLink to="/blogs" isActive={location.pathname === "/blogs"}>
-                Blogs
-              </NavLink>
-              <NavLink
-                to="/favourite-books"
-                isActive={location.pathname === "/favourite-books"}
-              >
-                Favourite Books
-              </NavLink>
-              <NavLink
-                to="/contact"
-                isActive={location.pathname === "/contact"}
-              >
-                Contact us
-              </NavLink>
-              <NavLink
-                to="/user-profile"
-                isActive={location.pathname === "/user-profile"}
-              >
-                Profile
-              </NavLink>
+                <NavLink to="/home" isActive={location.pathname === "/home"}>
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/my-books"
+                  isActive={location.pathname === "/my-books"}
+                >
+                  My Books
+                </NavLink>
+                <NavLink
+                  to="/chat-bot"
+                  isActive={location.pathname === "/chat-bot"}
+                >
+                  Chatbot
+                </NavLink>
+
+                <NavLink to="/blogs" isActive={location.pathname === "/blogs"}>
+                  Blogs
+                </NavLink>
+                {/* <NavLink
+                  to="/favourite-books"
+                  isActive={location.pathname === "/favourite-books"}
+                >
+                  Favourite Books
+                </NavLink> */}
+                {/* <NavLink
+                  to="/contact"
+                  isActive={location.pathname === "/contact"}
+                >
+                  Contact us
+                </NavLink> */}
+                <NavLink
+                  to="/user-profile"
+                  isActive={location.pathname === "/user-profile"}
+                >
+                  Profile
+                </NavLink>
               </>
             ) : null}
 
@@ -158,8 +154,12 @@ const Navbar: React.FC = () => {
                 variant="ghost"
                 className="relative h-12 w-12 rounded-full p-0 hover:bg-transparent"
               >
-                <Avatar className="h-11 w-11 border-2 border-[#265073] transition-transform hover:scale-105">
-                  <AvatarImage src={AVATAR_URL} alt="User avatar" />
+                <Avatar className="h-11 w-11 border-2 border-[#265073] transition-transform hover:scale-105 rounded-full overflow-hidden">
+                  <AvatarImage
+                    src={AVATAR_URL}
+                    alt="User avatar"
+                    className="object-cover"
+                  />
                   <AvatarFallback>UN</AvatarFallback>
                 </Avatar>
               </Button>
@@ -177,7 +177,7 @@ const Navbar: React.FC = () => {
                     <MenuItem to="/my-books" icon={Book}>
                       MY BOOKS
                     </MenuItem>
-                    <MenuItem to="/cart" icon={Heart}>
+                    <MenuItem to="/cart" icon={ShoppingCart}>
                       Cart
                     </MenuItem>
                     <MenuItem to="/blogs" icon={FileText}>

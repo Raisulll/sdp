@@ -57,6 +57,10 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
         console.error("Failed to submit review");
       }
     });
+    // clear form data
+    setRating(0);
+    setReview
+      ("");
     onClose();
   };
 

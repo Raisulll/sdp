@@ -1,6 +1,6 @@
 import { type Book } from "@/types/blog";
 
-export const trendingBooks: Book[] = [
+export const   trendingBooks: Book[] = [
   {
     id: "1",
     title: "The Midnight Library",

@@ -1,77 +1,59 @@
 import { Card } from "@/components/ui/card";
-import { Facebook, Github, Instagram } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Facebook, Github, Instagram, Trophy } from "lucide-react";
 import { type SocialLinks } from "@/types/blog";
 import { FC } from "react";
+import { useNavigate } from "react-router-dom";
+
+import posterImage1 from "@/assets/poster1.jpg";
 
 interface ReadingChallengeProps {
-  targetBooks: number;
-  currentStats: {
-    wantToRead: number;
-    completed: number;
-    currentlyReading: number;
-  };
   socialLinks?: SocialLinks;
 }
 
-export const ReadingChallenge: FC<ReadingChallengeProps> = ({
-  targetBooks,
-  currentStats,
-  socialLinks,
-}) => {
+export const ReadingChallenge: FC<ReadingChallengeProps> = ({ socialLinks }) => {
+  const navigate = useNavigate();
+
+  const handleCreatePosterClick = () => {
+    navigate("/submit-poster");
+  };
+
   return (
-    <Card className="p-6 bg-[#FAF7ED]">
-      <h2 className="font-bold text-[#265073] mb-4">2024 READING CHALLENGE</h2>
-      <p className="text-sm text-gray-600 mb-4">
-        Challenge Your Self to Have More Than {targetBooks} Books
+    <Card className="p-4 bg-gradient-to-r from-[#FAF7ED] to-[#EDE7FA] text-center shadow-lg flex flex-col items-center">
+      {/* Trophy and Title */}
+      <Trophy className="text-[#5D4E96] h-8 w-8 mb-2" />
+      <h1 className="text-xl font-bold text-[#265073] mb-3">Weekly Poster Challenge</h1>
+
+      {/* Advertisement Text */}
+      <p className="text-gray-700 text-sm mb-4 max-w-md">
+        Showcase your creativity! Design a stunning poster and submit it to our 
+        <strong> Weekly Poster Challenge</strong>.
       </p>
 
-      <div className="flex justify-center mb-6">
-        <div className="relative w-32 h-32">
-          <img
-            src="https://via.placeholder.com/400x300?text=Bookav"
-            alt="Reading Challenge"
-            className="w-full h-full object-contain"
-          />
-        </div>
+      {/* Poster Image */}
+      <div className="relative rounded-lg overflow-hidden shadow-md mb-4">
+        <img
+          src={posterImage1}
+          alt="Featured Poster Design"
+          className="h-40 w-40 object-contain"
+        />
       </div>
 
-      <div className="text-center mb-6">
-        <p className="font-semibold text-[#265073]">I Want to Read</p>
-        <div className="flex items-center justify-center gap-2 my-2">
-          <span className="text-2xl font-bold text-[#265073]">
-            {targetBooks}
-          </span>
-        </div>
-        <p className="text-sm text-gray-600">
-          You Can Change Your Goal at Any Time
-        </p>
-      </div>
+      {/* Submit Button */}
+      <Button
+        size="sm"
+        className="w-full bg-[#5D4E96] text-white hover:bg-[#4A3D7D] shadow-md"
+        onClick={handleCreatePosterClick}
+      >
+        Submit Your Poster
+      </Button>
 
-      <div className="space-y-4 mb-6">
-        <h3 className="font-semibold text-[#265073]">THE BOOK SHELVES</h3>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Want to Read</span>
-            <span className="text-[#265073]">({currentStats.wantToRead})</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span>Completed</span>
-            <span className="text-[#265073]">({currentStats.completed})</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span>Currently Reading</span>
-            <span className="text-[#265073]">
-              ({currentStats.currentlyReading})
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-center gap-4">
+      {/* Social Links */}
+      <div className="flex justify-center gap-3 mt-3">
         {socialLinks?.facebook && (
           <a
             href={socialLinks.facebook}
-            className="text-gray-600 hover:text-[#265073]"
+            className="text-gray-600 hover:text-[#265073] transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -81,7 +63,7 @@ export const ReadingChallenge: FC<ReadingChallengeProps> = ({
         {socialLinks?.instagram && (
           <a
             href={socialLinks.instagram}
-            className="text-gray-600 hover:text-[#265073]"
+            className="text-gray-600 hover:text-[#265073] transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -91,7 +73,7 @@ export const ReadingChallenge: FC<ReadingChallengeProps> = ({
         {socialLinks?.github && (
           <a
             href={socialLinks.github}
-            className="text-gray-600 hover:text-[#265073]"
+            className="text-gray-600 hover:text-[#265073] transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >
