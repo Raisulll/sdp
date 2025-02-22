@@ -53,14 +53,14 @@ const Sidebar = () => {
             Pending Books
           </Link>
         </li>
-        <li>
+        {/* <li> no needed by arif abdullah
           <Link
             to="/admin/Add-Admin"
             className="block hover:bg-[#1B3B5A] p-2 rounded"
           >
             Add Admin
           </Link>
-        </li>
+        </li> */}
         <li>
           <Link
             to="/admin/Add-Publishers"

@@ -12,14 +12,19 @@ const Transactions = () => {
       setLoading(true);
       setError(null);
       try {
-        // Fetch transactions with status "Completed"
-        // and join related user details from the users table
+        // Fetch transactions and join with related tables
         const { data, error } = await supabase
           .from("transactions")
-          .select("id, date, amount, user:users (firstname, lastname, email, phone_number)")
-          .eq("status", "Completed");
+          .select(
+            `id, 
+             timestamp, 
+             user:users (firstname, lastname), 
+             publisher:publisher (name), 
+             book:books (title, price)`
+          );
 
         if (error) throw error;
+
         setTransactions(data || []);
       } catch (err: any) {
         setError(err.message);
@@ -44,11 +49,11 @@ const Transactions = () => {
           <table className="w-full bg-white shadow-md rounded">
             <thead className="bg-[#265073] text-white">
               <tr>
-                <th className="p-3 text-left">Name</th>
-                <th className="p-3 text-left">Email</th>
-                <th className="p-3 text-left">Phone</th>
-                <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Amount</th>
+                <th className="p-3 text-left">User Name</th>
+                <th className="p-3 text-left">Publisher Name</th>
+                <th className="p-3 text-left">Book</th>
+                <th className="p-3 text-left">Time</th>
+                <th className="p-3 text-left">Price</th>
               </tr>
             </thead>
             <tbody>
@@ -57,10 +62,10 @@ const Transactions = () => {
                   <td className="p-3">
                     {txn.user ? `${txn.user.firstname} ${txn.user.lastname}` : "Unknown"}
                   </td>
-                  <td className="p-3">{txn.user ? txn.user.email : "Unknown"}</td>
-                  <td className="p-3">{txn.user ? txn.user.phone_number : "Unknown"}</td>
-                  <td className="p-3">{txn.date}</td>
-                  <td className="p-3">{txn.amount}</td>
+                  <td className="p-3">{txn.publisher ? txn.publisher.name : "Unknown"}</td>
+                  <td className="p-3">{txn.book ? txn.book.title : "Unknown"}</td>
+                  <td className="p-3">{new Date(txn.timestamp).toLocaleString()}</td>
+                  <td className="p-3">${txn.book ? txn.book.price.toFixed(2) : "N/A"}</td>
                 </tr>
               ))}
             </tbody>
