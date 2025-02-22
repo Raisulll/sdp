@@ -252,7 +252,7 @@ export default function BlogFeed() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5]">
+    <div className="min-h-screen bg-[#E5EADD]">
       <Navbar />
       <main className="max-w-[680px] mx-auto px-4 pt-20 pb-12">
         <CreatePost user={currentUser} onCreatePost={handleCreatePost} />
@@ -276,7 +276,7 @@ export default function BlogFeed() {
           ))}
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

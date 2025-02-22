@@ -176,17 +176,17 @@ const WishlistPage: React.FC = () => {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>${subtotal}</span>
+                    <span>৳{subtotal}</span>
                   </div>
                   {selectedItems.length > 0 && (
                     <div className="flex justify-between">
                       <span>Online Fee</span>
-                      <span>${onlineFee}</span>
+                      <span>৳{onlineFee}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-semibold text-base pt-3 border-t">
                     <span>Total</span>
-                    <span>${total}</span>
+                    <span>৳{total}</span>
                   </div>
                 </div>
                 <Button

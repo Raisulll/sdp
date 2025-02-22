@@ -189,7 +189,7 @@ const CheckoutPage: React.FC = () => {
               <h2 className="text-lg font-semibold mb-4">You're paying:</h2>
               <div className="flex justify-between font-semibold text-base pt-3 border-t">
                 <span>Total</span>
-                <span>${total}</span>
+                <span>৳{total}</span>
               </div>
             </div>
           </div>

@@ -364,19 +364,19 @@ const BookDetails: React.FC = () => {
                 className="w-full rounded-lg shadow-lg"
               />
               <div className="text-2xl font-bold text-center text-[#265073]">
-                ${book[0].price}
+                ৳{book[0].price}
               </div>
               <div className="grid  gap-4">
                 {purchased ? (
-                    <div className="flex justify-center">
+                  <div className="flex justify-center">
                     <Button
-                      // on click navigate to the pdf reader / book id 
+                      // on click navigate to the pdf reader / book id
                       onClick={() => navigate(`/pdf-reader/${bookId}`)}
                       className="justify-center bg-[#265073] hover:bg-[#265073]/90"
                     >
                       Open Book
                     </Button>
-                    </div>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
                     <Button
