@@ -200,13 +200,13 @@ const AdminDashboard = () => {
             <p className="text-sm mt-2">Manage books pending approval</p>
           </Link>
 
-          <Link
+          {/* <Link noneeded by arif
             to="/admin/Add-Admin"
             className="bg-teal-500 text-white p-6 rounded-lg shadow-md hover:shadow-lg text-center"
           >
             <h3 className="text-2xl font-semibold">Add Admin</h3>
             <p className="text-sm mt-2">Approve or remove admin accounts</p>
-          </Link>
+          </Link> */}
 
           <Link
             to="/admin/Add-Publishers"
